@@ -1,0 +1,13 @@
+:root {
+    --main-bg-color: brown;
+    --main-text-color: black;
+    --main-accent-color: red;
+}
+
+.primary-background{
+    background-color: var(--main-bg-color);
+}
+
+.text-color{
+    color: var(--main-text-color);
+}
