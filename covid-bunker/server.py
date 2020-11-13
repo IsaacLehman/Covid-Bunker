@@ -69,9 +69,81 @@ def close_connection(exception):
 ''' ************************************************************************ '''
 
 ''' page handlers '''
+# home page
 @app.route("/")
 def home():
     return render_template("home.html")
+
+# search results
+@app.route("/search/", methods=['GET'])
+def search():
+    return render_template("search.html")
+
+### LOGIN ###
+# login page
+@app.route("/login/", methods=['GET'])
+def login_get():
+    return render_template("login.html")
+
+# login page (after login submission)
+@app.route("/login/", methods=['POST'])
+def login_post():
+    return render_template("login.html")
+
+### REGISTER ###
+# register page
+@app.route("/register/", methods=['GET'])
+def register_get():
+    return render_template("register.html")
+
+# register page (after login submission)
+@app.route("/register/", methods=['POST'])
+def register_post():
+    return render_template("register.html")
+
+# profile page
+@app.route("/profile/")
+def checkout_confirmation():
+    return render_template("profile.html")
+
+
+# product page
+@app.route("/product/<int:pid>/")
+def search(pid):
+    return render_template("product_single.html")
+
+# cart page
+@app.route("/cart/")
+def cart():
+    return render_template("cart.html")
+
+# checkout page
+@app.route("/checkout/")
+def checkout():
+    return render_template("checkout.html")
+
+# checkout confirmation page
+@app.route("/checkout_confirmation/")
+def checkout_confirmation():
+    return render_template("checkout_confirmation.html")
+
+### ADMIN ###
+# admin overview page
+@app.route("/admin/")
+def admin():
+    return render_template("admin.html")
+
+# admin add product page
+@app.route("/admin-add-product/")
+def admin_add_product():
+    return render_template("admin_add_product.html")
+
+# admin edit product page
+@app.route("/admin-edit-product/")
+def admin_edit_product():
+    return render_template("admin_edit_product.html")
+
+
 
 
 ''' errors handlers '''
