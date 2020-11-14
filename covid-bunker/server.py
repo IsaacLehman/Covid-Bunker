@@ -41,7 +41,7 @@ app.config["SECRET_KEY"] = "!kn4fs%dkl#JED*BKS89" # Secret Key for Sessions
 # get the path to the directory this script is in
 scriptdir = os.path.dirname(__file__)
 # add the relative path to the database file from there
-dbpath = os.path.join(scriptdir, "db/database_name_here.sqlite3")
+dbpath = os.path.join(scriptdir, "db/db.sqlite3")
 
 ''' define databse functions for opening/closing connections '''
 # Get db connection
@@ -103,13 +103,13 @@ def register_post():
 
 # profile page
 @app.route("/profile/")
-def checkout_confirmation():
+def profile():
     return render_template("profile.html")
 
 
 # product page
 @app.route("/product/<int:pid>/")
-def search(pid):
+def product(pid):
     return render_template("product_single.html")
 
 # cart page
@@ -148,11 +148,11 @@ def admin_edit_product():
 
 ''' errors handlers '''
 @app.errorhandler(404)
-def page_not_found(e):
+def page_not_found_404(e):
     return render_template("error.html", code=404, description="Not Found"), 404
 
 @app.errorhandler(500)
-def page_not_found(e):
+def page_not_found_500(e):
     return render_template("error.html", code=500, description="server error"), 500
 
 
