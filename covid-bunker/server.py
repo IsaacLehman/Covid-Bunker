@@ -131,7 +131,7 @@ def checkout_confirmation():
 # admin overview page
 @app.route("/admin/")
 def admin():
-    return render_template("admin.html")
+    return render_template("admin.html", urlAddProduct=url_for("admin_add_product"))
 
 # admin add product page
 @app.route("/admin-add-product/")
