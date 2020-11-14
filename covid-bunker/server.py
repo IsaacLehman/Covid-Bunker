@@ -69,11 +69,13 @@ def close_connection(exception):
 ''' ************************************************************************ '''
 
 ''' page handlers '''
+### HOME ###
 # home page
 @app.route("/")
 def home():
     return render_template("home.html")
 
+### SEARCH ###
 # search results
 @app.route("/search/", methods=['GET'])
 def search():
@@ -106,7 +108,7 @@ def register_post():
 def profile():
     return render_template("profile.html")
 
-
+### PRODUCTS ###
 # product page
 @app.route("/product/<int:pid>/")
 def product(pid):

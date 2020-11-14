@@ -12,6 +12,10 @@
     <script async src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script async src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     {% endblock %}
+    {% block icons %}
+    <!-- Add icon library -->
+    <script src="https://kit.fontawesome.com/77ddb78ecd.js" crossorigin="anonymous"></script>
+    {% endblock %}
     <!-- define a block for custom css -->
     {% block css %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -25,20 +29,22 @@
 <body>
     <header>
         {% block header %}
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
             <div class="container">
                 <a class="navbar-brand" href="{{ url_for('home') }}">Covid Bunker</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                   <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/login">Login </a>
-                        </li>
-                        <li class="nav-item">
-                        <a class="nav-link" href="/register">Register </a>
-                        </li>
+                    <ul class="nav navbar-nav navbar-right ml-auto">
+                        {% block logged_out %}
+                        <li class="nav-item {% block register %}{% endblock %}"><a href="/register/" class="nav-link"><i class="fas fa-user"></i> Register</a></li>
+                        <li class="nav-item {% block login %}{% endblock %}"><a href="/login/" class="nav-link"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                        {% endblock %}
+                        {% block logged_in %}
+                        <li class="nav-item {% block profile %}{% endblock %}"><a href="/admin/" class="nav-link"><i class="fas fa-user"></i> Profile</a></li>
+                        <li class="nav-item {% block logout %}{% endblock %}"><a href="/" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        {% endblock %}
                     </ul>
                 </div>
             </div>
@@ -52,7 +58,7 @@
     </main>
 
     {% block footer %}
-    <footer class="footer fixed-bottom p-1 bg-light">
+    <footer class="footer fixed-bottom p-1 bg-dark">
         <div class="container">
             <span class="text-muted">&#169; 2020 Covid Bunker </span>
         </div>

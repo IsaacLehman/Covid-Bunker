@@ -1,7 +1,25 @@
 {% extends "base.html" %}
 
 {% block title %}
-{{ super() }}
+{{ super() }} - Login
+{% endblock %}
+
+{% block login %}
+active
+{% endblock %}
+
+{% block logged_out %}
+    {% if signed_in %}
+    {% else %}
+        {{ super() }}
+    {% endif %}
+{% endblock %}
+
+{% block logged_in %}
+    {% if signed_in %}
+        {{ super() }}
+    {% else %}
+    {% endif %}
 {% endblock %}
 
 {% block content %}
