@@ -15,29 +15,28 @@
     <form action="/admin-add-product/" method="POST">
 		<div class="form-group">
             <label for="productName"> Product Name: </label>
-            <input id="productName" type="text" name="productName">
+            <input id="productName" type="text" name="productName" value="{{productName}}"> 
         </div>
         <div class="form-group">
             <label for="productImage">Product Image: </label>
-            <input type="file" name="product-img" id="product-img" />
+            <input type="file" name="product-img" id="product-img" accept="image/png, image/jpeg">
         </div>
         <div class="form-group">
             <label for="description"> Description: </label>
-            <textarea class="form-control" id="description" rows="4"></textarea>
+            <textarea class="form-control" id="description" rows="4" name="description">{{description}}</textarea>
         </div>
         <div class="form-group">
             <label for="quantity"> Quantity: </label>
-            <input id="quantity" type="number" name="quantity">
+            <input id="quantity" type="number" name="quantity" value="{{quantity}}">
         </div>
         <div class="form-group">
-            <label for="Price"> Price: </label>
-            <input id="price" type="number" name="price">
+            <label for="Price"> Price (in $): </label>
+            <input id="price" type="number" name="price" value="{{price}}" step="0.01">
         </div>
         <div class="form-group">
             <input type="submit" name="Save" value="Save">
         </div>
 
 	</form>
-    <p>Add a product</p>
 </div>
 {% endblock %}
