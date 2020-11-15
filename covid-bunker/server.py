@@ -21,6 +21,7 @@ from flask import Flask, render_template
 from flask import request, session, flash
 from flask import redirect, url_for
 from flask import g
+import urllib
 import sqlite3
 import os
 
@@ -133,12 +134,53 @@ def checkout_confirmation():
 # admin overview page
 @app.route("/admin/")
 def admin():
-    return render_template("admin.html")
+    return render_template("admin.html", urlAddProduct=url_for("admin_add_product"))
+
+@app.route("/admin-add-product/", methods=['POST'])
+def admin_post():
+    productName = request.form.get("productName")
+    productImg = request.form.get("product-img")
+    description = request.form.get("description")
+    quantity = request.form.get("quantity")
+    price = request.form.get("price")
+
+    try:
+        quantity = int(quantity)
+    except:
+        flash("Quantity must be integer")
+        return render_template("admin_add_product.html", productName=productName, productImg=productImg, description=description, quantity=quantity, price=price)
+    try:
+        price = float(price)
+    except:
+        flash("Invalid price")
+        return render_template("admin_add_product.html", productName=productName, productImg=productImg, description=description, quantity=quantity, price=price)
+
+    if productName is None or productName == "":
+        flash("You need a product name")
+        return render_template("admin_add_product.html", productName=productName, productImg=productImg, description=description, quantity=quantity, price=price)
+    if productImg is None or productImg == "":
+        flash("Please insert a picture of the product")
+        return render_template("admin_add_product.html", productName=productName, productImg=productImg, description=description, quantity=quantity, price=price)
+    if quantity is None or quantity < 0:
+        flash("Quanity must be at least 0")
+        return render_template("admin_add_product.html", productName=productName, productImg=productImg, description=description, quantity=quantity, price=price)
+    if price is None or price <= 0:
+        flash("This is a for-profit business. Charity is not allowed")
+        return render_template("admin_add_product.html", productName=productName, productImg=productImg, description=description, quantity=quantity, price=price)
+
+    conn = get_db()
+    c = conn.cursor()
+    c.execute('''
+    INSERT INTO Products (Name, Description, Price, Qty, ImgURL) VALUES (?, ?, ?, ?, ?);
+    ''', (productName, description, price, quantity, productImg))
+    conn.commit()
+    return redirect(url_for("admin"))
+    
 
 # admin add product page
-@app.route("/admin-add-product/")
+@app.route("/admin-add-product/", methods=['GET'])
 def admin_add_product():
-    return render_template("admin_add_product.html")
+    return render_template("admin_add_product.html", productName="", productImg="", description="", quantity="", price="")
 
 # admin edit product page
 @app.route("/admin-edit-product/")
