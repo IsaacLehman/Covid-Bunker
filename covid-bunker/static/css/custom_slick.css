@@ -1,0 +1,10 @@
+.slick-home {
+    width: 90%;
+    margin: 0 auto; /* it centers any block level element */
+}
+
+.slick-images-custom{
+    width: 90%;
+    max-height: auto;
+    margin: 0 auto; /* it centers any block level element */
+}

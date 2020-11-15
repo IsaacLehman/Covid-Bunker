@@ -10,6 +10,7 @@
 <link rel="stylesheet" type="text/css" href="/static/slick/slick.css"/>
 <!-- Add the new slick-theme.css if you want the default styling -->
 <link rel="stylesheet" type="text/css" href="/static/slick/slick-theme.css"/>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/custom_slick.css') }}">
 {% endblock %}
 
 {% block logged_out %}
@@ -47,6 +48,54 @@
 <div class="container p-2">
     <h1 class="display-1 text-center">COVID BUNKER</h1>
     <p class="lead text-center">Your one stop shop for all things Covid</p>
+</div>
+
+<!-- PRODUCT CATEGORY SELECTORS -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-sm-4 p-2">
+            <div class="card shadow">
+                <img class="card-img-top" src="/static/img/face-mask-stock-image.jpg" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title text-dark text-center">Face Masks</h5>
+                 </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-4 p-2">
+            <div class="card shadow">
+                <img class="card-img-top" src="/static/img/hand-sanitizer-stock-image.jpg" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title text-dark text-center">Hand Sanitizer</h5>
+                 </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-4 p-2">
+            <div class="card shadow">
+                <img class="card-img-top" src="/static/img/toilet-paper-stock-image.jpg" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title text-dark text-center">Toilet Paper</h5>
+                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PRODUCTS -->
+<div class="container pt-4">
+    {% for i in range(22) %}
+        <div class="row">
+            {% for i in range(4) %}
+            <div class="col-6 col-sm-6 col-md-3 col-lg-3  p-3">
+                <div class="card shadow">
+                    <img class="card-img-top" src="/static/img/toilet-paper-stock-image.jpg" alt="Card image cap">
+                    <div class="card-body">
+                        <h5 class="card-title text-dark text-center">Toilet Paper</h5>
+                     </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
 </div>
 {% endblock %}
 
