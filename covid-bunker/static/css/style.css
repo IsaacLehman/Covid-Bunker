@@ -1,19 +1,31 @@
 /* css goes here */
 html, body {
   height: 100%;
+  width: 100%;
   margin: 0;
   padding: 0;
   background: #646464;
 }
 
-.accent{
-    background-color: #fddb3a;
+.accent-bg{
+    background-color: #fddb3a !important;
     color: black;
+}
+.accent-text{
+    color: #fddb3a !important;
+}
+
+/* START SLICK */
+.slick-home {
+    width: 90%;
+    margin: 0 auto; /* it centers any block level element */
 }
 
 .slick-images-custom{
-    max-width: 75%;
-    height: auto;
+    width: 90%;
+    max-height: auto;
     object-fit: cover;
+    overflow: hidden;
     margin: 0 auto; /* it centers any block level element */
 }
+/* END SLICK */
