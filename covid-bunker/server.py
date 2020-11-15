@@ -21,6 +21,7 @@ from flask import Flask, render_template
 from flask import request, session, flash
 from flask import redirect, url_for
 from flask import g
+from werkzeug.utils import secure_filename
 import urllib
 import sqlite3
 import os
@@ -33,7 +34,9 @@ import os
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0 # no cache
 app.config["SECRET_KEY"] = "!kn4fs%dkl#JED*BKS89" # Secret Key for Sessions
-
+UPLOAD_FOLDER = 'static\img'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 ''' ************************************************************************ '''
 '''                              DATABASE SET UP                             '''
 ''' ************************************************************************ '''
@@ -63,7 +66,9 @@ def close_connection(exception):
 '''                               PYTHON FUNCTIONS                           '''
 ''' ************************************************************************ '''
 
-
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 ''' ************************************************************************ '''
 '''                               ROUTE HANDLERS                             '''
@@ -139,7 +144,7 @@ def admin():
 @app.route("/admin-add-product/", methods=['POST'])
 def admin_post():
     productName = request.form.get("productName")
-    productImg = request.form.get("product-img")
+    productImg = request.files['product-img']
     description = request.form.get("description")
     quantity = request.form.get("quantity")
     price = request.form.get("price")
@@ -168,11 +173,19 @@ def admin_post():
         flash("This is a for-profit business. Charity is not allowed")
         return render_template("admin_add_product.html", productName=productName, productImg=productImg, description=description, quantity=quantity, price=price)
 
+    if not allowed_file(productImg.filename):
+        flash("Invalid File")
+        return render_template("admin_add_product.html", productName=productName, productImg=productImg, description=description, quantity=quantity, price=price)
+
+    filename = secure_filename(productImg.filename)
+    productImg.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+
     conn = get_db()
     c = conn.cursor()
     c.execute('''
     INSERT INTO Products (Name, Description, Price, Qty, ImgURL) VALUES (?, ?, ?, ?, ?);
-    ''', (productName, description, price, quantity, productImg))
+    ''', (productName, description, price, quantity, filename))
     conn.commit()
     return redirect(url_for("admin"))
     
