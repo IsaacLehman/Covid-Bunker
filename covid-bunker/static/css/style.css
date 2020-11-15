@@ -1,1 +1,18 @@
 /* css goes here */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #646464;
+}
+
+.accent{
+    background-color: #fddb3a;
+    color: black;
+}
+
+.slick-images-custom{
+    height: 500px;
+    width: auto;
+    margin: 0 auto; /* it centers any block level element */
+}

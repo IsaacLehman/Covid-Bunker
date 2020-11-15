@@ -4,6 +4,14 @@
 {{ super() }}
 {% endblock %}
 
+{% block css %}
+{{ super() }}
+<!-- SLICK SLIDER CSS -->
+<link rel="stylesheet" type="text/css" href="/static/slick/slick.css"/>
+<!-- Add the new slick-theme.css if you want the default styling -->
+<link rel="stylesheet" type="text/css" href="/static/slick/slick-theme.css"/>
+{% endblock %}
+
 {% block logged_out %}
     {% if signed_in %}
     {% else %}
@@ -19,7 +27,35 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <p>Hey there, you are home :)</p>
+<div class="container p-2">
+    <p>search bar goes here..</p>
 </div>
+
+<!-- SLICK SLIDER -->
+<div class="container slick-home">
+  <div><a href="/"><img class="slick-images-custom shadow rounded" src="/static/img/face-mask-stock-image.jpg" alt="Face mask image"></a></div>
+  <div><a href="/"><img class="slick-images-custom shadow rounded" src="/static/img/hand-sanitizer-stock-image.jpg" alt="Hand sanitizer image"></a></div>
+  <div><a href="/"><img class="slick-images-custom shadow rounded" src="/static/img/toilet-paper-stock-image.jpg" alt="Toilet paper image"></a></div>
+</div>
+
+<div class="container p-2">
+    <h1 class="display-1 text-center">COVID BUNKER</h1>
+    <p class="lead text-center">Your one stop shop for all things Covid</p>
+</div>
+{% endblock %}
+
+<!-- SLICK SLIDER SCRIPTS -->
+{% block footer_scripts %}
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript" src="/static/slick/slick.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.slick-home').slick({
+            autoplay:true,
+            dots:true
+        });
+    });
+  </script>
 {% endblock %}
