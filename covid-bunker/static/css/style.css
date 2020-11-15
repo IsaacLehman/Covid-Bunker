@@ -12,7 +12,8 @@ html, body {
 }
 
 .slick-images-custom{
-    height: 500px;
-    width: auto;
+    max-width: 75%;
+    height: auto;
+    object-fit: cover;
     margin: 0 auto; /* it centers any block level element */
 }
