@@ -20,10 +20,18 @@
 
 {% block content %}
 <div class="container">
-    <p>Prod name: {{product.name}} <br>
-        Prod desc: {{product.description}} <br>
-        Price: {{product.price}}   Qty: {{product.quantity}}
-        <img src="/static/img/{{product.img}}" alt="{{product.name}}">
-    </p>
+    <h1 class="display-3">{{product.name}}</h1>
 </div>
+<div class="container">
+<div class="row">
+    <div class="col-md-3">
+        <img src="/static/img/{{product.img}}" alt="{{product.name}}" width="200" height="200">
+    </div>
+    <div class="col-md-9">
+        <h3 class="dispay-4"><br>{{product.description}} </h3>
+    </div>
+
+</div>
+</div>
+Price: {{product.price}}   Qty: {{product.quantity}}
 {% endblock %}
