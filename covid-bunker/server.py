@@ -145,6 +145,7 @@ def admin():
     SELECT * FROM Products;
     ''').fetchall()
     sales = {}
+    urls = {}
     for product in products:
         sum = 0
         salePerItem = c.execute('''
@@ -153,7 +154,8 @@ def admin():
         for singleSale in salePerItem:
             sum += int(singleSale[0])*float(singleSale[1])
         sales[product[0]] = "{:.2f}".format(sum)
-    return render_template("admin.html", urlAddProduct=url_for("admin_add_product"), products=products, sales=sales)
+        urls[product[0]] = url_for("admin_edit_product", PID=product[0])
+    return render_template("admin.html", urlAddProduct=url_for("admin_add_product"), urlsForEditProduct=urls, products=products, sales=sales)
 
 @app.route("/admin-add-product/", methods=['POST'])
 def admin_post():
@@ -210,9 +212,17 @@ def admin_add_product():
     return render_template("admin_add_product.html", productName="", productImg="", description="", quantity="", price="")
 
 # admin edit product page
-@app.route("/admin-edit-product/")
-def admin_edit_product():
-    return render_template("admin_edit_product.html")
+@app.route("/admin-edit-product/<int:PID>", methods=['GET'])
+def admin_edit_product(PID):
+    conn = get_db()
+    c = conn.cursor()
+    product = c.execute('''
+    SELECT * FROM Products WHERE PID=?;
+    ''', (PID,)).fetchone()
+    if product is None:
+        flash("Product could not be found")
+        return redirect(url_for("admin"))
+    return render_template("admin_edit_product.html", productName=product[1], productImg=product[5], description=product[2], quantity=product[4], price=product[3])
 
 
 
