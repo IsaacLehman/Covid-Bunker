@@ -72,9 +72,13 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # returns a dictionary of the products: {id, name, description, price, quantity, img}
+# for .fetchall
 def map_product_query_results(products):
     return [{'id':product[0], 'name':product[1], 'description':product[2], 'price':product[3], 'quantity':product[4], 'img':product[5]} for product in products]
 
+#if you did .fetchone
+def map_product_query_result(product):
+    return {'id':product[0], 'name':product[1], 'description':product[2], 'price':product[3], 'quantity':product[4], 'img':product[5]}
 ''' ************************************************************************ '''
 '''                               ROUTE HANDLERS                             '''
 ''' ************************************************************************ '''
@@ -148,6 +152,7 @@ def product(pid):
     product = c.execute('''
     SELECT pID, name, description, price, qty, ImgURL FROM Products where pID = ?;
     ''', (pid,)).fetchone()
+    product = map_product_query_result(product)
     return render_template("product_single.html", product=product)
 
 # cart page
