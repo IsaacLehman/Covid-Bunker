@@ -143,7 +143,12 @@ def profile():
 # product page
 @app.route("/product/<int:pid>/")
 def product(pid):
-    return render_template("product_single.html")
+    conn = get_db()
+    c = conn.cursor()
+    product = c.execute('''
+    SELECT pID, name, description, price, qty, ImgURL FROM Products where pID = ?;
+    ''', (pid,)).fetchone()
+    return render_template("product_single.html", product=product)
 
 # cart page
 @app.route("/cart/")
