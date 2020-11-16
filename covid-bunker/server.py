@@ -36,7 +36,7 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0 # no cache
 app.config["SECRET_KEY"] = "!kn4fs%dkl#JED*BKS89" # Secret Key for Sessions
 UPLOAD_FOLDER = 'static\img'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'gif'}
 ''' ************************************************************************ '''
 '''                              DATABASE SET UP                             '''
 ''' ************************************************************************ '''
@@ -139,7 +139,21 @@ def checkout_confirmation():
 # admin overview page
 @app.route("/admin/")
 def admin():
-    return render_template("admin.html", urlAddProduct=url_for("admin_add_product"))
+    conn = get_db()
+    c = conn.cursor()
+    products = c.execute('''
+    SELECT * FROM Products;
+    ''').fetchall()
+    sales = {}
+    for product in products:
+        sum = 0
+        salePerItem = c.execute('''
+        SELECT Qty, PricePer FROM ProductsSold WHERE PID=?;
+        ''', (product[0],)).fetchall()
+        for singleSale in salePerItem:
+            sum += int(singleSale[0])*float(singleSale[1])
+        sales[product[0]] = "{:.2f}".format(sum)
+    return render_template("admin.html", urlAddProduct=url_for("admin_add_product"), products=products, sales=sales)
 
 @app.route("/admin-add-product/", methods=['POST'])
 def admin_post():
@@ -174,7 +188,7 @@ def admin_post():
         return render_template("admin_add_product.html", productName=productName, productImg=productImg, description=description, quantity=quantity, price=price)
 
     if not allowed_file(productImg.filename):
-        flash("Invalid File")
+        flash("Please upload a jpg or a png")
         return render_template("admin_add_product.html", productName=productName, productImg=productImg, description=description, quantity=quantity, price=price)
 
     filename = secure_filename(productImg.filename)

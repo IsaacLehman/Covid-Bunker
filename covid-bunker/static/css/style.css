@@ -15,4 +15,20 @@ html, body {
     color: #fddb3a !important;
 }
 
+.card-color{
+  color: black;
+}
+
+/*
+div.hor-scroll {
+  overflow-x: auto;
+  white-space: nowrap;
+}*/
+/*
+.hor-scroll > .row > .col-md-4 {
+  display: inline-block;
+  float: none;
+}*/
+
+
 /* ----------------------------------- */

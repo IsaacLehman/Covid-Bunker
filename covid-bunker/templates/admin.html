@@ -20,7 +20,31 @@
 
 {% block content %}
 <div class="container">
-    <a class="btn btn-primary" href="{{urlAddProduct}}" role="button">Add Product</a>
-    <p>Hey there, you are home :)</p>
+    <div class="row">
+        
+        <div class="card-deck text-center hor-scroll">
+            {%for product in products%}
+            <div class="card mb-4 col-md-4 px-0">
+                <div class="card-header card-color">
+                <h3>{{product[1]}}</h3>
+                </div>
+                <div class="card-body">
+                <img class="card-img-top" src="/static/img/{{product[5]}}" alt="{{product[1]}}" width="12rem" height="150rem">
+
+                <h4 class="card-text card-color"> Price: ${{product[3]}}</h4>
+                    <h4 class="card-text card-color">Quantity: {{product[4]}} </h4>
+                    <h4 class="card-text card-color">Sales: ${{sales[product[0]]}} </h4>
+                    
+                </div>
+            <button type="button" class="btn btn-lg btn-block btn-outline-primary card-button">Edit Product</button>
+            </div> 
+            {%endfor%} 
+        </div>   
+        
+    </div>
 </div>
+<div class="container">
+    <a class="btn btn-primary" href="{{urlAddProduct}}" role="button">Add Product</a>
+</div>
+    
 {% endblock %}
