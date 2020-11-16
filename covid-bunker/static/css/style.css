@@ -19,16 +19,28 @@ html, body {
   color: black;
 }
 
-/*
-div.hor-scroll {
+.hor-scroll{
+  align-items: stretch;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   overflow-x: auto;
-  white-space: nowrap;
-}*/
-/*
-.hor-scroll > .row > .col-md-4 {
-  display: inline-block;
-  float: none;
-}*/
+  overflow-y: hidden;
+}
+.card-scroll {
+  /*float: left;*/
+  max-width: 33.333%;
+  padding: 0.75rem;
+  margin: 2rem;
+  border: 0;
+  flex-basis: 33.333%;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.admin-button {
+  margin: 1rem;
+}
 
 
 /* ----------------------------------- */
