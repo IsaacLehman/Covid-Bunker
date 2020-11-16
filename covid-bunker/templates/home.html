@@ -38,11 +38,19 @@
 
 <!-- SLICK SLIDER -->
 <div class="container">
+    {% if featured_products %}
+    <div class="slick-home">
+      {% for product in featured_products %}
+      <div><a href="/product/{{ product.id }}"><img class="slick-images-custom shadow rounded" src="/static/img/{{ product.img }}" alt="{{ product.name }}"></a></div>
+      {% endfor %}
+    </div>
+    {% else %}
     <div class="slick-home">
       <div><a href="/"><img class="slick-images-custom shadow rounded" src="/static/img/face-mask-stock-image.jpg" alt="Face mask image"></a></div>
       <div><a href="/"><img class="slick-images-custom shadow rounded" src="/static/img/hand-sanitizer-stock-image.jpg" alt="Hand sanitizer image"></a></div>
       <div><a href="/"><img class="slick-images-custom shadow rounded" src="/static/img/toilet-paper-stock-image.jpg" alt="Toilet paper image"></a></div>
     </div>
+    {% endif %}
 </div>
 
 <div class="container p-2">
@@ -101,16 +109,18 @@
 
 <!-- SLICK SLIDER SCRIPTS -->
 {% block footer_scripts %}
-<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-<script type="text/javascript" src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-<script type="text/javascript" src="/static/slick/slick.min.js"></script>
+    {% if featured_products %}
+        <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script type="text/javascript" src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+        <script type="text/javascript" src="/static/slick/slick.min.js"></script>
 
-<script type="text/javascript">
-    $(document).ready(function(){
-        $('.slick-home').slick({
-            autoplay:true,
-            dots:true
-        });
-    });
-  </script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('.slick-home').slick({
+                    autoplay:true,
+                    dots:true
+                });
+            });
+          </script>
+    {% endif %}
 {% endblock %}

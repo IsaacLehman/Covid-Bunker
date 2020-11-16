@@ -22,6 +22,7 @@ from flask import request, session, flash
 from flask import redirect, url_for
 from flask import g
 from werkzeug.utils import secure_filename
+import random
 import urllib
 import sqlite3
 import os
@@ -70,6 +71,10 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+# returns a dictionary of the products: {id, name, description, price, quantity, img}
+def map_product_query_results(products):
+    return [{'id':product[0], 'name':product[1], 'description':product[2], 'price':product[3], 'quantity':product[4], 'img':product[5]} for product in products]
+
 ''' ************************************************************************ '''
 '''                               ROUTE HANDLERS                             '''
 ''' ************************************************************************ '''
@@ -79,7 +84,27 @@ def allowed_file(filename):
 # home page
 @app.route("/")
 def home():
-    return render_template("home.html")
+    # get all products
+    conn = get_db()
+    c = conn.cursor()
+    products = c.execute('''
+    SELECT pID, name, description, price, qty, ImgURL FROM Products;
+    ''').fetchall()
+
+    # convert products to dictionary
+    modified_products = map_product_query_results(products)
+
+    # choose random products to be featured
+    num_random_products = 3 # number of featured products to choose
+    featured_products = []
+    try:
+        for i in range(num_random_products):
+            featured_products.append(random.choice(modified_products))
+    except IndexError as e:
+        print('ERROR: Not enough products to choose 3 random featured ones. (Called from home)')
+
+
+    return render_template("home.html", products=modified_products, featured_products=featured_products, signed_in=False)
 
 ### SEARCH ###
 # search results
@@ -204,7 +229,7 @@ def admin_post():
     ''', (productName, description, price, quantity, filename))
     conn.commit()
     return redirect(url_for("admin"))
-    
+
 
 # admin add product page
 @app.route("/admin-add-product/", methods=['GET'])
