@@ -39,16 +39,16 @@
 <!-- SLICK SLIDER -->
 <div class="container">
     {% if featured_products %}
-    <div class="slick-home">
+    <div class="slick-home shadow">
       {% for product in featured_products %}
-      <div><a href="/product/{{ product.id }}"><img class="slick-images-custom shadow rounded" src="/static/img/{{ product.img }}" alt="{{ product.name }}"></a></div>
+      <div><a href="/product/{{ product.id }}"><img class="slick-images-custom rounded" src="/static/img/{{ product.img }}" alt="{{ product.name }}"></a></div>
       {% endfor %}
     </div>
     {% else %}
-    <div class="slick-home">
-      <div><a href="/"><img class="slick-images-custom shadow rounded" src="/static/img/face-mask-stock-image.jpg" alt="Face mask image"></a></div>
-      <div><a href="/"><img class="slick-images-custom shadow rounded" src="/static/img/hand-sanitizer-stock-image.jpg" alt="Hand sanitizer image"></a></div>
-      <div><a href="/"><img class="slick-images-custom shadow rounded" src="/static/img/toilet-paper-stock-image.jpg" alt="Toilet paper image"></a></div>
+    <div class="slick-home shadow">
+      <div><a href="/"><img class="slick-images-custom rounded" src="/static/img/face-mask-stock-image.jpg" alt="Face mask image"></a></div>
+      <div><a href="/"><img class="slick-images-custom rounded" src="/static/img/hand-sanitizer-stock-image.jpg" alt="Hand sanitizer image"></a></div>
+      <div><a href="/"><img class="slick-images-custom rounded" src="/static/img/toilet-paper-stock-image.jpg" alt="Toilet paper image"></a></div>
     </div>
     {% endif %}
 </div>

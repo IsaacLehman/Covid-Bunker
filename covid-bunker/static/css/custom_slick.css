@@ -3,8 +3,68 @@
     margin: 0 auto; /* it centers any block level element */
 }
 
-.slick-images-custom{
+.slick-images-customs{
     width: 90%;
-    max-height: auto;
+    height: auto;
     margin: 0 auto; /* it centers any block level element */
+}
+
+.slick-images-custom {
+  object-fit: cover; /* Do not scale the image */
+  object-position: center; /* Center the image within the element */
+  width: 100%;
+  height: 42.1%;
+}
+
+
+/*
+ * Author: http://stuffandnonsense.co.uk/blog/about/hardboiled_css3_media_queries/
+ */
+
+
+/* Smartphones ----------- */
+@media only screen
+and (max-width : 425px) {
+/* Styles */
+  .slick-images-custom {
+    max-height: 10rem;
+  }
+}
+
+/* Smartphones ----------- */
+@media only screen
+and (min-width : 426px)
+and (max-width : 500px) {
+/* Styles */
+  .slick-images-custom {
+    max-height: 12.5rem;
+  }
+}
+
+@media only screen
+and (min-width : 501px)
+and (max-width : 768px) {
+/* Styles */
+  .slick-images-custom {
+    max-height: 15rem;
+  }
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen
+and (min-width : 768px)
+and (max-width : 1223px) {
+/* Styles */
+  .slick-images-custom {
+    max-height: 21.5rem;
+  }
+}
+
+/* Desktops and laptops ----------- */
+@media only screen
+and (min-width : 1224px) {
+/* Styles */
+  .slick-images-custom {
+    max-height: 35rem;
+  }
 }

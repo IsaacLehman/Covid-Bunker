@@ -102,8 +102,7 @@ def home():
     num_random_products = 3 # number of featured products to choose
     featured_products = []
     try:
-        for i in range(num_random_products):
-            featured_products.append(random.choice(modified_products))
+        featured_products = random.sample(modified_products, num_random_products)
     except IndexError as e:
         print('ERROR: Not enough products to choose 3 random featured ones. (Called from home)')
 
