@@ -106,8 +106,9 @@ def home():
     except IndexError as e:
         print('ERROR: Not enough products to choose 3 random featured ones. (Called from home)')
 
+    # TODO: FILTER out products that are out of stock 
 
-    return render_template("home.html", products=modified_products, featured_products=featured_products, signed_in=False)
+    return render_template("home.html", products=modified_products, num_products=len(modified_products), featured_products=featured_products, signed_in=False)
 
 ### SEARCH ###
 # search results

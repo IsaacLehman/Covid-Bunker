@@ -44,12 +44,6 @@
       <div><a href="/product/{{ product.id }}"><img class="slick-images-custom rounded" src="/static/img/{{ product.img }}" alt="{{ product.name }}"></a></div>
       {% endfor %}
     </div>
-    {% else %}
-    <div class="slick-home shadow">
-      <div><a href="/"><img class="slick-images-custom rounded" src="/static/img/face-mask-stock-image.jpg" alt="Face mask image"></a></div>
-      <div><a href="/"><img class="slick-images-custom rounded" src="/static/img/hand-sanitizer-stock-image.jpg" alt="Hand sanitizer image"></a></div>
-      <div><a href="/"><img class="slick-images-custom rounded" src="/static/img/toilet-paper-stock-image.jpg" alt="Toilet paper image"></a></div>
-    </div>
     {% endif %}
 </div>
 
@@ -62,26 +56,26 @@
 <div class="container">
     <div class="row">
         <div class="col-md-4 col-sm-4 p-3">
-            <div class="card shadow">
+            <div class="card shadow bg-dark">
                 <img class="card-img-top" src="/static/img/face-mask-stock-image.jpg" alt="Card image cap">
                 <div class="card-body">
-                    <h5 class="card-title text-dark text-center">Face Masks</h5>
+                    <h5 class="card-title text-light text-center">Face Masks</h5>
                  </div>
             </div>
         </div>
         <div class="col-md-4 col-sm-4 p-3">
-            <div class="card shadow">
+            <div class="card shadow bg-dark">
                 <img class="card-img-top" src="/static/img/hand-sanitizer-stock-image.jpg" alt="Card image cap">
                 <div class="card-body">
-                    <h5 class="card-title text-dark text-center">Hand Sanitizer</h5>
+                    <h5 class="card-title text-light text-center">Hand Sanitizer</h5>
                  </div>
             </div>
         </div>
         <div class="col-md-4 col-sm-4 p-3">
-            <div class="card shadow">
+            <div class="card shadow bg-dark">
                 <img class="card-img-top" src="/static/img/toilet-paper-stock-image.jpg" alt="Card image cap">
                 <div class="card-body">
-                    <h5 class="card-title text-dark text-center">Toilet Paper</h5>
+                    <h5 class="card-title text-light text-center">Toilet Paper</h5>
                  </div>
             </div>
         </div>
@@ -89,22 +83,31 @@
 </div>
 
 <!-- PRODUCTS -->
+{% if products %}
 <div class="container pt-3">
-    {% for i in range(22) %}
-        <div class="row">
-            {% for i in range(4) %}
-            <div class="col-6 col-sm-6 col-md-3 col-lg-3  p-3">
-                <div class="card shadow">
-                    <img class="card-img-top" src="/static/img/toilet-paper-stock-image.jpg" alt="Card image cap">
-                    <div class="card-body">
-                        <h5 class="card-title text-dark text-center">Toilet Paper</h5>
-                     </div>
-                </div>
+  {% for row in products|batch(4) %}
+  <div class="row">
+    {% for product in row %}
+
+      <div class="col-6 col-sm-6 col-md-6 col-lg-3  p-3">
+        <div class="card shadow bg-secondary">
+            <a href="/product/{{ product.id }}"><img class="card-img-top product-img" src="/static/img/{{ product.img }}" alt="{{ product.name }}"></a>
+            <div class="card-body p-1 pb-3">
+              <a href="/product/{{ product.id }}"><h5 class="card-title text-light text-center">{{ product.name }}</h5></a>
+              <p class="card-text text-light text-center">${{ product.price }}</p>
+              <div class="d-flex justify-content-center">
+              <a href="#" class="btn accent-bg mr-1">Buy Now</a>
+              <a href="#" class="btn  ml-1 accent-bg">Add to Cart</a>
+              </div>
             </div>
-            {% endfor %}
         </div>
+      </div>
+
     {% endfor %}
+  </div>
+  {% endfor %}
 </div>
+{% endif %}
 {% endblock %}
 
 <!-- SLICK SLIDER SCRIPTS -->
