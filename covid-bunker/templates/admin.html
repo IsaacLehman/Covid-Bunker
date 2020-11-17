@@ -25,14 +25,14 @@
             {%for product in products%}
             <div class="card card-scroll">
                 <div class="card-header card-color">
-                <h3>{{product[1]}}</h3>
+                <h3>{{product['name']}}</h3>
                 </div>
                 <div class="card-body">
-                <img class="card-img-top" src="/static/img/{{product[5]}}" alt="{{product[1]}}" width="12rem" height="150rem">
+                <img class="card-img-top" src="/static/img/{{product['img']}}" alt="{{product['name']}}" width="12rem" height="150rem">
 
-                <h4 class="card-text card-color"> Price: ${{product[3]}}</h4>
-                    <h4 class="card-text card-color">Quantity: {{product[4]}} </h4>
-                    <h4 class="card-text card-color">Sales: ${{sales[product[0]]}} </h4>
+                <h4 class="card-text card-color"> Price: ${{product['price']}}</h4>
+                    <h4 class="card-text card-color">Quantity: {{product['quantity']}} </h4>
+                    <h4 class="card-text card-color">Sales: ${{sales[product['id']]}} </h4>
                     
                 </div>
                 <a class="btn btn-primary admin-button" href="{{urlsForEditProduct[product[0]]}}" role="button">Edit Product</a>

@@ -181,16 +181,18 @@ def admin():
     ''').fetchall()
     sales = {}
     urls = {}
-    for product in products:
+    products_dict = map_product_query_results(products)
+
+    for product in products_dict:
         sum = 0
         salePerItem = c.execute('''
         SELECT Qty, PricePer FROM ProductsSold WHERE PID=?;
-        ''', (product[0],)).fetchall()
+        ''', (product['id'],)).fetchall()
         for singleSale in salePerItem:
             sum += int(singleSale[0])*float(singleSale[1])
-        sales[product[0]] = "{:.2f}".format(sum)
-        urls[product[0]] = url_for("admin_edit_product", PID=product[0])
-    return render_template("admin.html", urlAddProduct=url_for("admin_add_product"), urlsForEditProduct=urls, products=products, sales=sales)
+        sales[product['id']] = "{:.2f}".format(sum)
+        urls[product['id']] = url_for("admin_edit_product", PID=product['id'])
+    return render_template("admin.html", urlAddProduct=url_for("admin_add_product"), urlsForEditProduct=urls, products=products_dict, sales=sales)
 
 @app.route("/admin-add-product/", methods=['POST'])
 def admin_post():
@@ -257,7 +259,8 @@ def admin_edit_product(PID):
     if product is None:
         flash("Product could not be found")
         return redirect(url_for("admin"))
-    return render_template("admin_edit_product.html", productName=product[1], productImg=product[5], description=product[2], quantity=product[4], price=product[3])
+    product_dict =map_product_query_result(product)
+    return render_template("admin_edit_product.html", productName=product_dict['name'], productImg=product_dict['img'], description=product_dict['description'], quantity=product_dict['quantity'], price=product_dict['price'])
 
 
 
