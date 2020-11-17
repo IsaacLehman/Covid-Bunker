@@ -55,7 +55,7 @@
 <!-- PRODUCT CATEGORY SELECTORS -->
 <div class="container">
     <div class="row">
-        <div class="col-md-4 col-sm-4 p-3">
+        <div class="col-md-4 col-4 p-3">
             <div class="card shadow bg-dark">
                 <img class="card-img-top" src="/static/img/face-mask-stock-image.jpg" alt="Card image cap">
                 <div class="card-body">
@@ -63,7 +63,7 @@
                  </div>
             </div>
         </div>
-        <div class="col-md-4 col-sm-4 p-3">
+        <div class="col-md-4 col-4 p-3">
             <div class="card shadow bg-dark">
                 <img class="card-img-top" src="/static/img/hand-sanitizer-stock-image.jpg" alt="Card image cap">
                 <div class="card-body">
@@ -71,7 +71,7 @@
                  </div>
             </div>
         </div>
-        <div class="col-md-4 col-sm-4 p-3">
+        <div class="col-md-4 col-4 p-3">
             <div class="card shadow bg-dark">
                 <img class="card-img-top" src="/static/img/toilet-paper-stock-image.jpg" alt="Card image cap">
                 <div class="card-body">
@@ -90,14 +90,14 @@
     {% for product in row %}
 
       <div class="col-6 col-sm-6 col-md-6 col-lg-3  p-3">
-        <div class="card shadow bg-secondary">
+        <div class="card shadow bg-secondary" category="{{ product.category }}">
             <a href="/product/{{ product.id }}"><img class="card-img-top product-img" src="/static/img/{{ product.img }}" alt="{{ product.name }}"></a>
             <div class="card-body p-1 pb-3">
               <a href="/product/{{ product.id }}"><h5 class="card-title text-light text-center">{{ product.name }}</h5></a>
               <p class="card-text text-light text-center">${{ product.price }}</p>
               <div class="d-flex justify-content-center">
-              <a href="#" class="btn accent-bg mr-1">Buy Now</a>
-              <a href="#" class="btn  ml-1 accent-bg">Add to Cart</a>
+              <a href="#" class="btn  mr-1 accent-bg">Add to Cart</a>
+              <a href="#" class="btn bg-danger text-light ml-1">Buy Now</a>
               </div>
             </div>
         </div>

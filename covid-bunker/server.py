@@ -74,11 +74,11 @@ def allowed_file(filename):
 # returns a dictionary of the products: {id, name, description, price, quantity, img}
 # for .fetchall
 def map_product_query_results(products):
-    return [{'id':product[0], 'name':product[1], 'description':product[2], 'price':product[3], 'quantity':product[4], 'img':product[5]} for product in products]
+    return [{'id':product[0], 'name':product[1], 'description':product[2], 'price':product[3], 'quantity':product[4], 'img':product[5], 'category':product[6]} for product in products]
 
 #if you did .fetchone
 def map_product_query_result(product):
-    return {'id':product[0], 'name':product[1], 'description':product[2], 'price':product[3], 'quantity':product[4], 'img':product[5]}
+    return {'id':product[0], 'name':product[1], 'description':product[2], 'price':product[3], 'quantity':product[4], 'img':product[5], 'category':product[6]}
 ''' ************************************************************************ '''
 '''                               ROUTE HANDLERS                             '''
 ''' ************************************************************************ '''
@@ -92,7 +92,7 @@ def home():
     conn = get_db()
     c = conn.cursor()
     products = c.execute('''
-    SELECT pID, name, description, price, qty, ImgURL FROM Products;
+    SELECT pID, name, description, price, qty, ImgURL, category FROM Products;
     ''').fetchall()
 
     # convert products to dictionary
@@ -106,7 +106,7 @@ def home():
     except IndexError as e:
         print('ERROR: Not enough products to choose 3 random featured ones. (Called from home)')
 
-    # TODO: FILTER out products that are out of stock 
+    # TODO: FILTER out products that are out of stock
 
     return render_template("home.html", products=modified_products, num_products=len(modified_products), featured_products=featured_products, signed_in=False)
 
@@ -150,7 +150,7 @@ def product(pid):
     conn = get_db()
     c = conn.cursor()
     product = c.execute('''
-    SELECT pID, name, description, price, qty, ImgURL FROM Products where pID = ?;
+    SELECT pID, name, description, price, qty, ImgURL, category FROM Products where pID = ?;
     ''', (pid,)).fetchone()
     product = map_product_query_result(product)
     return render_template("product_single.html", product=product)
