@@ -18,6 +18,10 @@
     {% endif %}
 {% endblock %}
 
+{% block search %}
+    {{ super() }}
+{% endblock %}
+
 {% block content %}
 <div class="container">
     <h1 class="display-3">{{product.name}}</h1>
