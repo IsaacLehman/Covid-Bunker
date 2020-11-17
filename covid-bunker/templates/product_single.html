@@ -33,5 +33,22 @@
 
 </div>
 </div>
-Price: {{product.price}}   Qty: {{product.quantity}}
+<div class="container">
+<div class="row">
+    <div class="col-md-3 ">
+        <h4>
+        Price: ${{product.price}}<br>
+        In stock: {{product.quantity}}
+        </h4>
+    </div>
+    <div class="col-md-2">
+        <input type="number" class="form-control"  value="1" step="1">
+    </div>
+    <div class="col-md-6">
+        
+        <button type="button" class="btn btn-lg btn-warning">Add to cart</button>
+        <button type="button" class="btn btn-lg btn-danger">Buy it now</button>
+    </div>
+</div>
+</div>
 {% endblock %}
