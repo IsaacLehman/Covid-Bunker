@@ -37,7 +37,7 @@
         </div>
         <div class="form-group">
             <label for="description"> Description: </label>
-            <textarea class="form-control" id="description" rows="4" name="description">{{description}}</textarea>
+            <textarea class="form-control" id="description" rows="3" name="description">{{description}}</textarea>
         </div>
         <div class="form-group">
             <label for="quantity"> Quantity: </label>
@@ -47,6 +47,16 @@
             <label for="Price"> Price (in $): </label>
             <input id="price" type="number" name="price" value="{{price}}" step="0.01">
         </div>
+        <div class="form-group">
+            <label for="category">Category: </label>              
+            <select class="form-control" id="category" name="category">
+              <option>toilet paper</option>
+              <option>masks</option>
+              <option>hand sanitizer</option>
+              <option>sanitation supplies</option>
+              <option>other</option>
+            </select>
+          </div>
         <div class="form-group">
             <input type="submit" name="Save" value="Save">
         </div>

@@ -24,8 +24,10 @@
         
             {%for product in products%}
             <div class="card card-scroll">
-                <div class="card-header card-color">
+                <div class="card-header card-color card-header-flex"> 
                 <h3>{{product['name']}}</h3>
+                    <a class="btn delete-button" href="{{urlsForDeleteProduct[product['id']]}}" role="button"><img src="/static/img/DeleteSymbol.jpg" width="17rem" height="23rem"></a>
+                </form>
                 </div>
                 <div class="card-body">
                 <img class="card-img-top" src="/static/img/{{product['img']}}" alt="{{product['name']}}" width="12rem" height="150rem">
@@ -35,7 +37,7 @@
                     <h4 class="card-text card-color">Sales: ${{sales[product['id']]}} </h4>
                     
                 </div>
-                <a class="btn btn-primary admin-button" href="{{urlsForEditProduct[product[0]]}}" role="button">Edit Product</a>
+                <a class="btn btn-primary admin-button" href="{{urlsForEditProduct[product['id']]}}" role="button">Edit Product</a>
             </div> 
             {%endfor%}    
         

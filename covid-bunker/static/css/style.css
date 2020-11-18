@@ -51,3 +51,14 @@ html, body {
   height: 200px;
   width: 100%;
 }
+
+.delete-button {
+  background-color: red;
+  height: 3rem;
+  margin-left: 1rem;
+}
+
+.card-header-flex {
+  display: flex;
+  flex-direction: row;
+}
