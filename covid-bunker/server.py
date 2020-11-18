@@ -79,6 +79,11 @@ def map_product_query_results(products):
 #if you did .fetchone
 def map_product_query_result(product):
     return {'id':product[0], 'name':product[1], 'description':product[2], 'price':product[3], 'quantity':product[4], 'img':product[5], 'category':product[6]}
+
+
+# filter products to only include ones in stock
+def filter_in_stock(products):
+    return [p for p in products if p['quantity'] > 0]
 ''' ************************************************************************ '''
 '''                               ROUTE HANDLERS                             '''
 ''' ************************************************************************ '''
@@ -97,6 +102,9 @@ def home():
 
     # convert products to dictionary
     modified_products = map_product_query_results(products)
+
+    # filter out of stock products
+    modified_products = filter_in_stock(modified_products)
 
     # choose random products to be featured
     num_random_products = 3 # number of featured products to choose
