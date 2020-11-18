@@ -122,7 +122,20 @@ def home():
 # search results
 @app.route("/search/", methods=['GET'])
 def search():
-    return render_template("search.html")
+    # get all products
+    conn = get_db()
+    c = conn.cursor()
+    products = c.execute('''
+    SELECT pID, name, description, price, qty, ImgURL, category FROM Products;
+    ''').fetchall()
+
+    # convert products to dictionary
+    modified_products = map_product_query_results(products)
+
+    # filter out of stock products
+    modified_products = filter_in_stock(modified_products)
+
+    return render_template("search.html", products=modified_products)
 
 ### LOGIN ###
 # login page
