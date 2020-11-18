@@ -123,7 +123,7 @@ def home():
 @app.route("/search/", methods=['GET'])
 def search():
     query = None
-    error_msg = "Please search something..."
+    error_msg = "No results found..."
     try:
         if request.method == "GET":
             # get query
