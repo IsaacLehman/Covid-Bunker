@@ -122,20 +122,37 @@ def home():
 # search results
 @app.route("/search/", methods=['GET'])
 def search():
-    # get all products
-    conn = get_db()
-    c = conn.cursor()
-    products = c.execute('''
-    SELECT pID, name, description, price, qty, ImgURL, category FROM Products;
-    ''').fetchall()
+    query = None
+    error_msg = "Please search something..."
+    try:
+        if request.method == "GET":
+            # get query
+            query = request.args.get('s')
+            num_query = query # if a number
+            query = '%' + query + '%'
 
-    # convert products to dictionary
-    modified_products = map_product_query_results(products)
+            # get searched products
+            conn = get_db()
+            c = conn.cursor()
+            # execute query
+            products = c.execute('''
+            SELECT pID, name, description, price, qty, ImgURL, category FROM Products
+            WHERE pID = ? OR
+            name like ? OR
+            description like ? OR
+            category like ?''', (num_query, query, query, query)).fetchall()
 
-    # filter out of stock products
-    modified_products = filter_in_stock(modified_products)
+            # convert products to dictionary
+            modified_products = map_product_query_results(products)
+            # filter out, out-of-stock products
+            modified_products = filter_in_stock(modified_products)
 
-    return render_template("search.html", products=modified_products)
+            return render_template("search.html", products=modified_products, error_msg=error_msg)
+    except Exception as e:
+        print(e)
+        error_msg = "Something went wrong..."
+
+    return render_template("search.html", error_msg=error_msg)
 
 ### LOGIN ###
 # login page
