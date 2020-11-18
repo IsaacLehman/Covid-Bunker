@@ -34,8 +34,8 @@ function filter(parent, filter_id) {
 
   for( i=0; i< child_divs.length; i++ )
   {
-     var child_div = child_divs[i].firstElementChild;
-     var child_id = child_div.title;
+     var child_div = child_divs[i];
+     var child_id = child_div.firstElementChild.title;
 
      if (child_id === filter_id) {
        child_div.classList.remove('hidden');
@@ -50,8 +50,8 @@ function filter_other(parent) {
 
   for( i=0; i< child_divs.length; i++ )
   {
-     var child_div = child_divs[i].firstElementChild;
-     var child_id = child_div.title;
+    var child_div = child_divs[i];
+    var child_id = child_div.firstElementChild.title;
 
      if (child_id === 'masks' || child_id === 'toilet paper' || child_id === 'hand sanitizer') {
        child_div.classList.add('hidden');
@@ -66,9 +66,7 @@ function clear_filter(parent, filter_id) {
 
   for( i=0; i< child_divs.length; i++ )
   {
-     var child_div = child_divs[i].firstElementChild;
-     var child_id = child_div.title;
-
+     var child_div = child_divs[i];
      child_div.classList.remove('hidden');
   }
 }
