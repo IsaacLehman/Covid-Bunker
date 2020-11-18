@@ -51,3 +51,11 @@ html, body {
   height: 200px;
   width: 100%;
 }
+
+.pointer{
+  cursor: pointer;
+}
+
+.hidden{
+  display: none;
+}
