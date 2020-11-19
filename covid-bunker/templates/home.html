@@ -111,8 +111,8 @@
               <a href="/product/{{ product.id }}"><h5 class="card-title text-light text-center">{{ product.name }}</h5></a>
               <p class="card-text text-light text-center">${{ product.price }}</p>
               <div class="d-flex justify-content-center">
-              <a href="#" class="btn  mr-1  btn-warning">Add to Cart</a>
-              <a href="#" class="btn  ml-1  btn-danger">Buy Now</a>
+                <button type="button" value="{{ product.id }}" class="add_to_cart btn btn-warning mr-1">Add to cart</button>
+                <button type="button" value="{{ product.id }}" class="btn btn-danger ml-1">Buy it now</button>
               </div>
             </div>
         </div>

@@ -84,6 +84,17 @@ def map_product_query_result(product):
 # filter products to only include ones in stock
 def filter_in_stock(products):
     return [p for p in products if p['quantity'] > 0]
+
+
+# set a cookie
+# returns a response
+def set_cookie(response, key, value):
+    return ""
+
+# get a cookie
+def get_cookie(value):
+    return ""
+
 ''' ************************************************************************ '''
 '''                               ROUTE HANDLERS                             '''
 ''' ************************************************************************ '''
@@ -301,6 +312,24 @@ def admin_edit_product(PID):
     return render_template("admin_edit_product.html", productName=product_dict['name'], productImg=product_dict['img'], description=product_dict['description'], quantity=product_dict['quantity'], price=product_dict['price'])
 
 
+
+''' ajax requests '''
+@app.route('/ajax_request/', methods=['POST'])
+def ajax_request():
+    if request.method == "POST":
+        pid = request.form.get('pid')
+
+        conn = get_db()
+        c = conn.cursor()
+        product = c.execute('''
+        SELECT * FROM Products WHERE PID=?;
+        ''', (pid,)).fetchone()
+        if product is None:
+            return redirect(url_for("home")), 403
+
+        product_dict =map_product_query_result(product)
+        return product_dict
+    return 'hey'
 
 
 ''' errors handlers '''
