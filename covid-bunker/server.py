@@ -152,7 +152,7 @@ def verify_admin_product(template_name, productName, description, quantity, pric
     if productName is None or productName == "":
         flash("You need a product name")
         return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
-    if productImg is None or productImg == "":
+    if (productImg is None or productImg == "") and template_name == "admin_add_product.html":
         flash("Please insert a picture of the product")
         return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
     if quantity is None or quantity < 0:
@@ -162,7 +162,7 @@ def verify_admin_product(template_name, productName, description, quantity, pric
         flash("This is a for-profit business. Charity is not allowed")
         return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
 
-    if not allowed_file(productImg.filename):
+    if not allowed_file(productImg.filename) and template_name == "admin_add_product.html":
         flash("Please upload a jpg or a png")
         return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
     return ""
@@ -393,15 +393,29 @@ def admin_save_edited_product(PID):
     verification = verify_admin_product("admin_edit_product.html", productName, description, quantity, price, productImg, category, PID)
     if verification != "":
         return verification
-
-    filename = secure_filename(productImg.filename)
-    productImg.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
+    
     conn = get_db()
     c = conn.cursor()
-    c.execute('''
-    UPDATE Products SET Name=?, Description=?, Price=?, Qty=?, ImgURL=?, Category=? WHERE PID=?;
-    ''', (productName, description, price, quantity, filename, category, PID))
+
+    if (not allowed_file(productImg.filename)):
+        c.execute('''
+        UPDATE Products SET Name=?, Description=?, Price=?, Qty=?, Category=? WHERE PID=?;
+        ''', (productName, description, price, quantity, category, PID))
+    else:
+        image_url = c.execute('''
+        SELECT ImgURL FROM Products WHERE PID=?
+        ''', (PID, )).fetchone()
+        fullPath = os.path.join(app.config['UPLOAD_FOLDER'], image_url[0])
+        if os.path.exists(fullPath):
+            os.remove(fullPath)
+        else:
+            print("Image could not be found")
+        filename = secure_filename(productImg.filename)
+        productImg.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        c.execute('''
+        UPDATE Products SET Name=?, Description=?, Price=?, Qty=?, ImgURL=?, Category=? WHERE PID=?;
+        ''', (productName, description, price, quantity, filename, category, PID))
+
     conn.commit()
     return redirect(url_for("admin"))
 
@@ -439,3 +453,7 @@ if __name__ == "__main__":
 
 # Having debug=True allows possible Python errors to appear on the web page
 # run with $> python server.py
+
+#FileReader
+#FileList
+#Select and display images using FileReader
