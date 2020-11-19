@@ -21,6 +21,7 @@ from flask import Flask, render_template
 from flask import request, session, flash
 from flask import redirect, url_for
 from flask import g
+from flask import jsonify
 from werkzeug.utils import secure_filename
 import random
 import urllib
@@ -86,14 +87,52 @@ def filter_in_stock(products):
     return [p for p in products if p['quantity'] > 0]
 
 
-# set a cookie
-# returns a response
-def set_cookie(response, key, value):
-    return ""
+# add an item to cart Session and return the cart
+# cart stores id, price, quantity
+def add_product_to_cart_session(pid, quantity):
+    try:
+        pid = int(pid)
+    except Exception as e:
+        return redirect(url_for("home")), 403
+    ### db stuff
+    # get db connection
+    conn = get_db()
+    c = conn.cursor()
+    # look up product in db
+    product = c.execute('''
+    SELECT * FROM Products WHERE PID=?;
+    ''', (pid,)).fetchone()
+    # check if bad product id
+    if product is None:
+        return redirect(url_for("home")), 403
+    # convert result into a dictionary
+    product_dict = map_product_query_result(product)
 
-# get a cookie
-def get_cookie(value):
-    return ""
+    ### add item to cart
+    # check if there is already a cart
+    if 'cart' not in session: # check if there already is a cart
+        session['cart'] = []
+    # get current contents of cart
+    cart_list = session['cart']
+    # check if product is not already in cart
+    if not any(cart_item.get('id', -1) == pid for cart_item in cart_list):
+        # if item not already in cart
+        cart_list.append(
+            {
+                'id':pid,
+                'price':product_dict['price'],
+                'quantity':quantity
+            }
+        )
+    else:
+        # update quantity in cart
+        for cart_item in cart_list:
+            if cart_item.get('id', -1) == pid:
+                cart_item['quantity'] += 1
+    # set the session variable to the updated cart
+    session['cart'] = cart_list
+    return cart_list
+
 
 ''' ************************************************************************ '''
 '''                               VERIFICATION REUSE                         '''
@@ -275,7 +314,7 @@ def admin():
         sales[product['id']] = "{:.2f}".format(sum)
         urlsEdit[product['id']] = url_for("admin_edit_product", PID=product['id'])
         urlsDelete[product['id']]= url_for("admin_delete_product", PID=product['id'])
-        
+
 
     return render_template("admin.html", urlAddProduct=url_for("admin_add_product"), urlsForEditProduct=urlsEdit, urlsForDeleteProduct=urlsDelete, products=products_dict, sales=sales)
 
@@ -367,22 +406,18 @@ def admin_save_edited_product(PID):
     return redirect(url_for("admin"))
 
 ''' ajax requests '''
-@app.route('/ajax_request/', methods=['POST'])
-def ajax_request():
-    if request.method == "POST":
-        pid = request.form.get('pid')
+@app.route('/ajax_add_to_cart/', methods=['POST'])
+def ajax_add_to_cart():
+    #session.clear()
+    pid = request.form.get('pid')
 
-        conn = get_db()
-        c = conn.cursor()
-        product = c.execute('''
-        SELECT * FROM Products WHERE PID=?;
-        ''', (pid,)).fetchone()
-        if product is None:
-            return redirect(url_for("home")), 403
+    quantity = 1
+    if 'quantity' in request.form:
+        quantity = request.form.get('quantity')
 
-        product_dict =map_product_query_result(product)
-        return product_dict
-    return 'hey'
+    cart = add_product_to_cart_session(pid, quantity)
+
+    return jsonify(cart)
 
 
 ''' errors handlers '''

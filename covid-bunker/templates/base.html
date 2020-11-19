@@ -41,6 +41,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="nav navbar-nav navbar-right ml-auto">
+                       <li class="nav-item"><a href="/cart/" id="cart-nav" class="nav-link"><i class="fas fa-shopping-cart"></i> Cart</a></li>
                         {% block logged_out %}
                         <li class="nav-item {% block register %}{% endblock %}"><a href="/register/" class="nav-link"><i class="fas fa-user"></i> Register</a></li>
                         <li class="nav-item {% block login %}{% endblock %}"><a href="/login/" class="nav-link"><i class="fas fa-sign-in-alt"></i> Login</a></li>

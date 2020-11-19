@@ -15,18 +15,38 @@ window.addEventListener("DOMContentLoaded", function() {
 
 
 
+
+
 });
+
+function get_num_items_in_cart(cart) {
+    let num = 0;
+    for (i = 0; i < cart.length; i++) {
+      num += cart[i].quantity;
+    }
+    return num;
+}
+
+function updateCartNumber(num_items_in_cart) {
+  let car_nav_link = document.getElementById('cart-nav');
+  let icon = '<i class="fas fa-shopping-cart"></i>'
+  let updated_text = icon + ' Cart ' + num_items_in_cart;
+  car_nav_link.innerHTML = updated_text;
+}
 
 // executes a request to a given path and returns the response
 function ajax_add_to_cart(pID) {
-  path = '/ajax_request/'; // where to send the request
+  path = '/ajax_add_to_cart/'; // where to send the request
   request = 'pid=' + pID;
   let http = new XMLHttpRequest();
 
   http.onreadystatechange = function(){
     if(http.readyState == 4 && http.status == 200) {
       // what to do if response was good
-      console.log(http.response);
+      let cart = JSON.parse(http.response);
+      let num_items_in_cart = get_num_items_in_cart(cart);
+      updateCartNumber(num_items_in_cart);
+
     } else if(http.readyState == 4 && http.status != 200)  {
       // what to do if bad response
       console.log('bad ajax happened');
