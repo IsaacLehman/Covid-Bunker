@@ -4,6 +4,9 @@ html, body {
   width: 100%;
   margin: 0;
   padding: 0;
+  font-family: 'Source Sans Pro', sans-serif;
+
+
   /*background: #646464;*/
 }
 
@@ -53,6 +56,7 @@ html, body {
   width: 100%;
 }
 
+
 .delete-button {
   color: red;
   margin: 1rem;
@@ -65,4 +69,16 @@ html, body {
 
 .admin-title {
   text-align: center;
+
+.pointer{
+  cursor: pointer;
+}
+
+.hidden{
+  display: none;
+}
+
+.search-btn{
+  all:unset;
+
 }

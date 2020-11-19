@@ -13,6 +13,11 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/custom_slick.css') }}">
 {% endblock %}
 
+{% block header_scripts %}
+{{ super() }}
+<script type="text/javascript" src="/static/js/product-select.js"></script>
+{% endblock %}
+
 {% block logged_out %}
     {% if signed_in %}
     {% else %}
@@ -27,14 +32,11 @@
     {% endif %}
 {% endblock %}
 
+{% block search %}
+    {{ super() }}
+{% endblock %}
+
 {% block content %}
-<!-- Search form -->
-<div class="container pt-4 pb-4">
-    <form class="form-inline d-flex justify-content-center md-form form-sm">
-      <input class="form-control form-control-sm mr-3 w-50" type="text" placeholder="Search..." aria-label="Search">
-      <i class="fas fa-search" aria-hidden="true"></i>
-    </form>
-</div>
 
 <!-- SLICK SLIDER -->
 <div class="container">
@@ -55,57 +57,70 @@
 <!-- PRODUCT CATEGORY SELECTORS -->
 <div class="container">
     <div class="row">
-        <div class="col-md-4 col-4 p-3">
-            <div class="card shadow bg-dark">
+        <div class="col-sm-4 col-6 p-2">
+            <div class="card shadow bg-dark pointer" id="face-mask-selector">
                 <img class="card-img-top" src="/static/img/face-mask-stock-image.jpg" alt="Card image cap">
                 <div class="card-body">
-                    <h5 class="card-title text-light text-center">Face Masks</h5>
+                    <h5 class="card-title text-light text-center pt-2">Face Masks</h5>
                  </div>
             </div>
         </div>
-        <div class="col-md-4 col-4 p-3">
-            <div class="card shadow bg-dark">
+        <div class="col-sm-4 col-6 p-2">
+            <div class="card shadow bg-dark pointer" id="hand-sanitizer-selector">
                 <img class="card-img-top" src="/static/img/hand-sanitizer-stock-image.jpg" alt="Card image cap">
                 <div class="card-body">
-                    <h5 class="card-title text-light text-center">Hand Sanitizer</h5>
+                    <h5 class="card-title text-light text-center pt-2">Hand Sanitizer</h5>
                  </div>
             </div>
         </div>
-        <div class="col-md-4 col-4 p-3">
-            <div class="card shadow bg-dark">
+        <div class="col-sm-4 col-6 p-2">
+            <div class="card shadow bg-dark pointer" id="toilet-paper-selector">
                 <img class="card-img-top" src="/static/img/toilet-paper-stock-image.jpg" alt="Card image cap">
                 <div class="card-body">
-                    <h5 class="card-title text-light text-center">Toilet Paper</h5>
+                    <h5 class="card-title text-light text-center pt-2">Toilet Paper</h5>
                  </div>
             </div>
         </div>
+        <div class="col-sm-6 col-6 p-2">
+          <div class="card bg-dark shadow pointer pt-2" id="other-selector">
+            <h5 class="card-title text-light text-center pt-2">Other</h5>
+          </div>
+        </div>
+        <div class="col-sm-6 col-12 p-2">
+          <div class="card bg-dark shadow pointer pt-2" id="clear-selector">
+            <h5 class="card-title text-light text-center pt-2">Clear Filter</h5>
+          </div>
+        </div>
     </div>
+
+
 </div>
 
 <!-- PRODUCTS -->
 {% if products %}
-<div class="container pt-3">
-  {% for row in products|batch(4) %}
-  <div class="row">
-    {% for product in row %}
+<div class="container pt-2">
 
-      <div class="col-6 col-sm-6 col-md-6 col-lg-3  p-3">
-        <div class="card shadow bg-secondary" category="{{ product.category }}">
+  <div class="row" id="product-cards">
+  {% for product in products %}
+
+      <!-- card -->
+      <div class="col-6 col-sm-6 col-md-6 col-lg-3  p-2">
+        <div class="card shadow bg-secondary" title="{{ product.category }}">
             <a href="/product/{{ product.id }}"><img class="card-img-top product-img" src="/static/img/{{ product.img }}" alt="{{ product.name }}"></a>
             <div class="card-body p-1 pb-3">
               <a href="/product/{{ product.id }}"><h5 class="card-title text-light text-center">{{ product.name }}</h5></a>
               <p class="card-text text-light text-center">${{ product.price }}</p>
               <div class="d-flex justify-content-center">
-              <a href="#" class="btn  mr-1 accent-bg">Add to Cart</a>
-              <a href="#" class="btn bg-danger text-light ml-1">Buy Now</a>
+              <a href="#" class="btn  mr-1  btn-warning">Add to Cart</a>
+              <a href="#" class="btn  ml-1  btn-danger">Buy Now</a>
               </div>
             </div>
         </div>
       </div>
 
-    {% endfor %}
-  </div>
   {% endfor %}
+  </div>
+
 </div>
 {% endif %}
 {% endblock %}

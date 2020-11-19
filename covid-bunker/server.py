@@ -79,6 +79,11 @@ def map_product_query_results(products):
 #if you did .fetchone
 def map_product_query_result(product):
     return {'id':product[0], 'name':product[1], 'description':product[2], 'price':product[3], 'quantity':product[4], 'img':product[5], 'category':product[6]}
+
+
+# filter products to only include ones in stock
+def filter_in_stock(products):
+    return [p for p in products if p['quantity'] > 0]
 ''' ************************************************************************ '''
 '''                               VERIFICATION REUSE                         '''
 ''' ************************************************************************ '''
@@ -130,6 +135,9 @@ def home():
     # convert products to dictionary
     modified_products = map_product_query_results(products)
 
+    # filter out of stock products
+    modified_products = filter_in_stock(modified_products)
+
     # choose random products to be featured
     num_random_products = 3 # number of featured products to choose
     featured_products = []
@@ -146,7 +154,37 @@ def home():
 # search results
 @app.route("/search/", methods=['GET'])
 def search():
-    return render_template("search.html")
+    query = None
+    error_msg = "No results found..."
+    try:
+        if request.method == "GET":
+            # get query
+            query = request.args.get('s')
+            num_query = query # if a number
+            query = '%' + query + '%'
+
+            # get searched products
+            conn = get_db()
+            c = conn.cursor()
+            # execute query
+            products = c.execute('''
+            SELECT pID, name, description, price, qty, ImgURL, category FROM Products
+            WHERE pID = ? OR
+            name like ? OR
+            description like ? OR
+            category like ?''', (num_query, query, query, query)).fetchall()
+
+            # convert products to dictionary
+            modified_products = map_product_query_results(products)
+            # filter out, out-of-stock products
+            modified_products = filter_in_stock(modified_products)
+
+            return render_template("search.html", products=modified_products, error_msg=error_msg)
+    except Exception as e:
+        print(e)
+        error_msg = "Something went wrong..."
+
+    return render_template("search.html", error_msg=error_msg)
 
 ### LOGIN ###
 # login page

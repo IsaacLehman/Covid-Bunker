@@ -15,6 +15,9 @@
     {% block icons %}
     <!-- Add icon library -->
     <script src="https://kit.fontawesome.com/77ddb78ecd.js" crossorigin="anonymous"></script>
+    <!-- Add font library -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400&display=swap" rel="stylesheet">
     {% endblock %}
     <!-- define a block for custom css -->
     {% block css %}
@@ -51,6 +54,15 @@
         </nav>
         {% endblock %}
     </header>
+
+    {% block search %}
+    <div class="container pt-4 pb-4">
+        <form class="form-inline d-flex justify-content-center md-form form-sm" action="/search/" method="GET">
+          <input class="form-control form-control-sm mr-3 w-50" type="text" placeholder="Search..." aria-label="Search" name="s">
+          <button type="submit" value="Submit" class="btn-warning rounded"><i class="fas fa-search" aria-hidden="true"></i></button>
+        </form>
+    </div>
+    {% endblock %}
 
     <main class="text-light pb-5">
         {% block content %}
