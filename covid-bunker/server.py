@@ -82,34 +82,34 @@ def map_product_query_result(product):
 ''' ************************************************************************ '''
 '''                               VERIFICATION REUSE                         '''
 ''' ************************************************************************ '''
-def verify_admin_product(template_name, productName, description, quantity, price, productImg, category):
+def verify_admin_product(template_name, productName, description, quantity, price, productImg, category, PID):
     try:
         quantity = int(quantity)
     except:
         flash("Quantity must be integer")
-        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category)
+        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
     try:
         price = float(price)
     except:
         flash("Invalid price")
-        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category)
+        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
 
     if productName is None or productName == "":
         flash("You need a product name")
-        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category)
+        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
     if productImg is None or productImg == "":
         flash("Please insert a picture of the product")
-        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category)
+        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
     if quantity is None or quantity < 0:
         flash("Quanity must be at least 0")
-        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category)
+        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
     if price is None or price <= 0:
         flash("This is a for-profit business. Charity is not allowed")
-        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category)
+        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
 
     if not allowed_file(productImg.filename):
         flash("Please upload a jpg or a png")
-        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category)
+        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
     return ""
 ''' ************************************************************************ '''
 '''                               ROUTE HANDLERS                             '''
@@ -256,8 +256,7 @@ def admin_post():
     quantity = request.form.get("quantity")
     price = request.form.get("price")
     category = request.form.get("category")
-
-    verification = verify_admin_product("admin_add_product.html", productName, description, quantity, price, productImg, category)
+    verification = verify_admin_product("admin_add_product.html", productName, description, quantity, price, productImg, category, -1)
     if verification != "":
         return verification
 
@@ -291,13 +290,33 @@ def admin_edit_product(PID):
         flash("Product could not be found")
         return redirect(url_for("admin"))
     product_dict =map_product_query_result(product)
-    return render_template("admin_edit_product.html", productName=product_dict['name'], productImg=product_dict['img'], description=product_dict['description'], quantity=product_dict['quantity'], price=product_dict['price'], category=product_dict['category'])
+    return render_template("admin_edit_product.html", productName=product_dict['name'], productImg=product_dict['img'], description=product_dict['description'], quantity=product_dict['quantity'], price=product_dict['price'], category=product_dict['category'], PID=product_dict['id'])
 
-"""
+
 @app.route("/admin-edit-product/<int:PID>", methods=['POST'])
-def admin_edit_product(PID):
+def admin_save_edited_product(PID):
+    productName = request.form.get("productName")
+    productImg = request.files['product-img']
+    description = request.form.get("description")
+    quantity = request.form.get("quantity")
+    price = request.form.get("price")
+    category = request.form.get("category")
+    print(PID)
+    verification = verify_admin_product("admin_edit_product.html", productName, description, quantity, price, productImg, category, PID)
+    if verification != "":
+        return verification
+
+    filename = secure_filename(productImg.filename)
+    productImg.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+    conn = get_db()
+    c = conn.cursor()
+    c.execute('''
+    UPDATE Products SET Name=?, Description=?, Price=?, Qty=?, ImgURL=?, Category=? WHERE PID=?;
+    ''', (productName, description, price, quantity, filename, category, PID))
+    conn.commit()
     return redirect(url_for("admin"))
-"""
+
 
 ''' errors handlers '''
 @app.errorhandler(404)

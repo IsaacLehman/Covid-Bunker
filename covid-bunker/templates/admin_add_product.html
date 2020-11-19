@@ -24,7 +24,8 @@
 		<button type="button" class="close" data-dismiss="alert">&times;</button>
 		{{ message }}
 	</div>
-	{% endfor %}
+    {% endfor %}
+    <h1 class="admin-title">Add a Product</h1>
 <div class="container">
     <form action="/admin-add-product/" method="POST", enctype="multipart/form-data">
 		<div class="form-group">
@@ -50,11 +51,11 @@
         <div class="form-group">
             <label for="category">Category: </label>              
             <select class="form-control" id="category" name="category">
-              <option>toilet paper</option>
-              <option>masks</option>
-              <option>hand sanitizer</option>
-              <option>sanitation supplies</option>
-              <option>other</option>
+                <option {% if category == "toilet paper" %} selected{%endif%}>toilet paper</option>
+                <option {% if category == "masks" %} selected{%endif%}>masks</option>
+                <option {% if category == "hand sanitizer" %} selected{%endif%}>hand sanitizer</option>
+                <option {% if category == "sanitation supplies" %} selected{%endif%}>sanitation supplies</option>
+                <option {% if category == "other" %} selected{%endif%}>other</option>
             </select>
           </div>
         <div class="form-group">

@@ -23,10 +23,12 @@
     <div class="row hor-scroll">
         
             {%for product in products%}
-            <div class="card card-scroll">
+            <div class="card col-md-3 card-scroll">
                 <div class="card-header card-color card-header-flex"> 
                 <h3>{{product['name']}}</h3>
-                    <a class="btn delete-button" href="{{urlsForDeleteProduct[product['id']]}}" role="button"><img src="/static/img/DeleteSymbol.jpg" width="17rem" height="23rem"></a>
+                <a href="{{urlsForDeleteProduct[product['id']]}}">
+                    <i class="fas fa-trash delete-button" ></i>
+                </a>
                 </form>
                 </div>
                 <div class="card-body">
