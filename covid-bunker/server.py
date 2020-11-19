@@ -408,7 +408,6 @@ def admin_save_edited_product(PID):
 ''' ajax requests '''
 @app.route('/ajax_add_to_cart/', methods=['POST'])
 def ajax_add_to_cart():
-    #session.clear()
     pid = request.form.get('pid')
 
     quantity = 1
@@ -417,6 +416,11 @@ def ajax_add_to_cart():
 
     cart = add_product_to_cart_session(pid, quantity)
 
+    return jsonify(cart)
+
+@app.route('/ajax_get_cart/', methods=['GET'])
+def ajax_get_cart():
+    cart = session['cart']
     return jsonify(cart)
 
 
