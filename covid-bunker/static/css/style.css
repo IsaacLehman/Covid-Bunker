@@ -10,6 +10,7 @@ html, body {
   /*background: #646464;*/
 }
 
+
 .accent-bg{
     background-color: #fddb3a !important;
     color: black;
@@ -82,4 +83,28 @@ html, body {
 .search-btn{
   all:unset;
 
+}
+
+/* ----------------------------------- */
+/* scroll to top */
+#topBtn {
+  display: none;
+  position: fixed;
+  bottom: 50px;
+  right: 7%;
+  z-index: 99;
+  font-size: 20px;
+  border: none;
+  outline: none;
+
+  color: white;
+  cursor: pointer;
+  padding: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-radius: 30px;
+}
+
+#topBtn:hover {
+  background-color: #555;
 }
