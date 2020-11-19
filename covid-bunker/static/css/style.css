@@ -37,8 +37,9 @@ html, body {
   margin: 2rem;
   border: 0;
   flex-basis: 25%;
-  flex-grow: 0;
-  flex-shrink: 0;
+  /*flex-grow: 0;
+  flex-shrink: 0;*/
+  margin: 2.5rem;
 }
 
 .admin-button {
@@ -55,6 +56,20 @@ html, body {
   width: 100%;
 }
 
+
+.delete-button {
+  color: red;
+  margin: 1rem;
+}
+
+.card-header-flex {
+  display: flex;
+  flex-direction: row;
+}
+
+.admin-title {
+  text-align: center;
+
 .pointer{
   cursor: pointer;
 }
@@ -65,4 +80,5 @@ html, body {
 
 .search-btn{
   all:unset;
+
 }
