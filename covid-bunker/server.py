@@ -96,6 +96,38 @@ def get_cookie(value):
     return ""
 
 ''' ************************************************************************ '''
+'''                               VERIFICATION REUSE                         '''
+''' ************************************************************************ '''
+def verify_admin_product(template_name, productName, description, quantity, price, productImg, category, PID):
+    try:
+        quantity = int(quantity)
+    except:
+        flash("Quantity must be integer")
+        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
+    try:
+        price = float(price)
+    except:
+        flash("Invalid price")
+        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
+
+    if productName is None or productName == "":
+        flash("You need a product name")
+        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
+    if productImg is None or productImg == "":
+        flash("Please insert a picture of the product")
+        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
+    if quantity is None or quantity < 0:
+        flash("Quanity must be at least 0")
+        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
+    if price is None or price <= 0:
+        flash("This is a for-profit business. Charity is not allowed")
+        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
+
+    if not allowed_file(productImg.filename):
+        flash("Please upload a jpg or a png")
+        return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
+    return ""
+''' ************************************************************************ '''
 '''                               ROUTE HANDLERS                             '''
 ''' ************************************************************************ '''
 
@@ -221,7 +253,7 @@ def checkout_confirmation():
 
 ### ADMIN ###
 # admin overview page
-@app.route("/admin/")
+@app.route("/admin/", methods=['GET'])
 def admin():
     conn = get_db()
     c = conn.cursor()
@@ -229,7 +261,8 @@ def admin():
     SELECT * FROM Products;
     ''').fetchall()
     sales = {}
-    urls = {}
+    urlsEdit = {}
+    urlsDelete={}
     products_dict = map_product_query_results(products)
 
     for product in products_dict:
@@ -240,8 +273,29 @@ def admin():
         for singleSale in salePerItem:
             sum += int(singleSale[0])*float(singleSale[1])
         sales[product['id']] = "{:.2f}".format(sum)
-        urls[product['id']] = url_for("admin_edit_product", PID=product['id'])
-    return render_template("admin.html", urlAddProduct=url_for("admin_add_product"), urlsForEditProduct=urls, products=products_dict, sales=sales)
+        urlsEdit[product['id']] = url_for("admin_edit_product", PID=product['id'])
+        urlsDelete[product['id']]= url_for("admin_delete_product", PID=product['id'])
+        
+
+    return render_template("admin.html", urlAddProduct=url_for("admin_add_product"), urlsForEditProduct=urlsEdit, urlsForDeleteProduct=urlsDelete, products=products_dict, sales=sales)
+
+@app.route("/admin/<int:PID>/")
+def admin_delete_product(PID):
+    conn = get_db()
+    c = conn.cursor()
+    image_url = c.execute('''
+    SELECT ImgURL FROM Products WHERE PID=?
+    ''', (PID, )).fetchone()
+    fullPath = os.path.join(app.config['UPLOAD_FOLDER'], image_url[0])
+    if os.path.exists(fullPath):
+        os.remove(fullPath)
+    else:
+        print("Image could not be found")
+    c.execute('''
+    DELETE FROM Products WHERE PID=?
+    ''', (PID, ))
+    conn.commit()
+    return redirect(url_for("admin"))
 
 @app.route("/admin-add-product/", methods=['POST'])
 def admin_post():
@@ -250,34 +304,10 @@ def admin_post():
     description = request.form.get("description")
     quantity = request.form.get("quantity")
     price = request.form.get("price")
-
-    try:
-        quantity = int(quantity)
-    except:
-        flash("Quantity must be integer")
-        return render_template("admin_add_product.html", productName=productName, productImg=productImg, description=description, quantity=quantity, price=price)
-    try:
-        price = float(price)
-    except:
-        flash("Invalid price")
-        return render_template("admin_add_product.html", productName=productName, productImg=productImg, description=description, quantity=quantity, price=price)
-
-    if productName is None or productName == "":
-        flash("You need a product name")
-        return render_template("admin_add_product.html", productName=productName, productImg=productImg, description=description, quantity=quantity, price=price)
-    if productImg is None or productImg == "":
-        flash("Please insert a picture of the product")
-        return render_template("admin_add_product.html", productName=productName, productImg=productImg, description=description, quantity=quantity, price=price)
-    if quantity is None or quantity < 0:
-        flash("Quanity must be at least 0")
-        return render_template("admin_add_product.html", productName=productName, productImg=productImg, description=description, quantity=quantity, price=price)
-    if price is None or price <= 0:
-        flash("This is a for-profit business. Charity is not allowed")
-        return render_template("admin_add_product.html", productName=productName, productImg=productImg, description=description, quantity=quantity, price=price)
-
-    if not allowed_file(productImg.filename):
-        flash("Please upload a jpg or a png")
-        return render_template("admin_add_product.html", productName=productName, productImg=productImg, description=description, quantity=quantity, price=price)
+    category = request.form.get("category")
+    verification = verify_admin_product("admin_add_product.html", productName, description, quantity, price, productImg, category, -1)
+    if verification != "":
+        return verification
 
     filename = secure_filename(productImg.filename)
     productImg.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -286,8 +316,8 @@ def admin_post():
     conn = get_db()
     c = conn.cursor()
     c.execute('''
-    INSERT INTO Products (Name, Description, Price, Qty, ImgURL) VALUES (?, ?, ?, ?, ?);
-    ''', (productName, description, price, quantity, filename))
+    INSERT INTO Products (Name, Description, Price, Qty, ImgURL, Category) VALUES (?, ?, ?, ?, ?, ?);
+    ''', (productName, description, price, quantity, filename, category))
     conn.commit()
     return redirect(url_for("admin"))
 
@@ -295,7 +325,7 @@ def admin_post():
 # admin add product page
 @app.route("/admin-add-product/", methods=['GET'])
 def admin_add_product():
-    return render_template("admin_add_product.html", productName="", productImg="", description="", quantity="", price="")
+    return render_template("admin_add_product.html", productName="", productImg="", description="", quantity="", price="", category="toilet paper")
 
 # admin edit product page
 @app.route("/admin-edit-product/<int:PID>", methods=['GET'])
@@ -309,9 +339,32 @@ def admin_edit_product(PID):
         flash("Product could not be found")
         return redirect(url_for("admin"))
     product_dict =map_product_query_result(product)
-    return render_template("admin_edit_product.html", productName=product_dict['name'], productImg=product_dict['img'], description=product_dict['description'], quantity=product_dict['quantity'], price=product_dict['price'])
+    return render_template("admin_edit_product.html", productName=product_dict['name'], productImg=product_dict['img'], description=product_dict['description'], quantity=product_dict['quantity'], price=product_dict['price'], category=product_dict['category'], PID=product_dict['id'])
 
 
+@app.route("/admin-edit-product/<int:PID>", methods=['POST'])
+def admin_save_edited_product(PID):
+    productName = request.form.get("productName")
+    productImg = request.files['product-img']
+    description = request.form.get("description")
+    quantity = request.form.get("quantity")
+    price = request.form.get("price")
+    category = request.form.get("category")
+    print(PID)
+    verification = verify_admin_product("admin_edit_product.html", productName, description, quantity, price, productImg, category, PID)
+    if verification != "":
+        return verification
+
+    filename = secure_filename(productImg.filename)
+    productImg.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+    conn = get_db()
+    c = conn.cursor()
+    c.execute('''
+    UPDATE Products SET Name=?, Description=?, Price=?, Qty=?, ImgURL=?, Category=? WHERE PID=?;
+    ''', (productName, description, price, quantity, filename, category, PID))
+    conn.commit()
+    return redirect(url_for("admin"))
 
 ''' ajax requests '''
 @app.route('/ajax_request/', methods=['POST'])
