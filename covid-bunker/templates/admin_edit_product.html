@@ -38,8 +38,9 @@
             <input id="productName" type="text" name="productName" value="{{productName}}"> 
         </div>
         <div class="form-group">
-            <label for="productImage">Product Image: </label>
-            <input type="file" name="product-img" id="product-img" accept="image/png, image/jpeg">
+            <label for="productImage">Update Product Image: </label>
+            <input type="file" name="product-img" id="product-img" accept="image/png, image/jpeg" onchange='openFile(event);'>
+            <img class="admin-product-picture" src="/static/img/{{productImg}}" width="72rem" height="90rem">
         </div>
         <div class="form-group">
             <label for="description"> Description: </label>
