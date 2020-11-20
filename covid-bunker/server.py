@@ -344,8 +344,11 @@ def product(pid):
     product = c.execute('''
     SELECT pID, name, description, price, qty, ImgURL, category FROM Products where pID = ?;
     ''', (pid,)).fetchone()
-    product = map_product_query_result(product)
-    return render_template("product_single.html", product=product)
+    if(product):
+        product = map_product_query_result(product)
+        return render_template("product_single.html", product=product)
+    else:
+        return
 
 # cart page
 @app.route("/cart/")
