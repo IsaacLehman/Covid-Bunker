@@ -52,6 +52,30 @@ function ajax_update_cart() {
   http.send();
 }
 
+// clears the cart
+function ajax_remove_product_from_cart(pID) {
+  path = '/ajax_add_to_cart/'; // where to send the request
+  request = 'pid=' + pID;
+  let http = new XMLHttpRequest();
+
+  http.onreadystatechange = function(){
+    if(http.readyState == 4 && http.status == 200) {
+      // what to do if response was good
+      let cart = JSON.parse(http.response);
+      let num_items_in_cart = get_num_items_in_cart(cart);
+      updateCartNumber(num_items_in_cart);
+
+    } else if(http.readyState == 4 && http.status != 200)  {
+      // what to do if bad response
+      console.log('bad ajax happened', http.responseText);
+    }
+  }
+
+  http.open('POST', path, true); // asynchronus ajax_request
+  http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  http.send(request);
+}
+
 // executes a request to a given path and returns the response
 function ajax_add_to_cart(pID) {
   path = '/ajax_add_to_cart/'; // where to send the request
@@ -67,7 +91,7 @@ function ajax_add_to_cart(pID) {
 
     } else if(http.readyState == 4 && http.status != 200)  {
       // what to do if bad response
-      console.log('bad ajax happened');
+      console.log('bad ajax happened', http);
     }
   }
 

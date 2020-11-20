@@ -87,13 +87,50 @@ def filter_in_stock(products):
     return [p for p in products if p['quantity'] > 0]
 
 
-# add an item to cart Session and return the cart
-# cart stores id, price, quantity
-def add_product_to_cart_session(pid, quantity):
+''' ************************************************************************ '''
+'''                                 CART REUSE                               '''
+''' ************************************************************************ '''
+# check if single product has enough stock to sell
+def is_in_stock(product, quantity):
+    return product['quantity'] >= quantity
+
+# returns a list of dictionaries (i.e. products)
+def get_cart():
+    # check if there is already a cart
+    if 'cart' not in session: # check if there already is a cart
+        session['cart'] = []
+    # get current contents of cart
+    return session['cart']
+
+# sets session variable with cart list of dictionaries
+def set_cart(cart):
+    session['cart'] = cart
+# returns true if product is in cart
+def in_cart(cart, pid):
+    return any(cart_item.get('id', -1) == pid for cart_item in cart)
+
+# set the value of a specific product in the cart
+def set_cart_value(pid, key, value):
+    for cart_item in cart:
+        if cart_item.get('id', -1) == pid:
+            cart_item[key] = value
+
+# update the value of a specific product in the cart
+def update_cart_value(cart, pid, key, value):
+    for cart_item in cart:
+        if cart_item.get('id', -1) == pid:
+            cart_item[key] += value
+
+# remove an item from the cart
+def remove_from_cart(cart, pid):
+    cart = [product for product in cart if product.get('id') != pid]
+
+# return a dictionary of a product given a pID
+def get_product(pid):
     try:
         pid = int(pid)
     except Exception as e:
-        return redirect(url_for("home")), 403
+        return "ERROR: Could not convert product key to integer", 403
     ### db stuff
     # get db connection
     conn = get_db()
@@ -104,20 +141,26 @@ def add_product_to_cart_session(pid, quantity):
     ''', (pid,)).fetchone()
     # check if bad product id
     if product is None:
-        return redirect(url_for("home")), 403
+        return "ERROR: product does not exist", 403
     # convert result into a dictionary
     product_dict = map_product_query_result(product)
+    return product_dict
+
+# add an item to cart Session and return the cart
+# cart stores id, price, quantity
+def add_product_to_cart_session(pid, quantity):
+    # get a dictionary of the product from db
+    product_dict = get_product(pid)
+    # check if the requested quantity is available
+    if not is_in_stock(product_dict, quantity):
+        return "ERROR: there is only " + product_dict['quantity'] + ' available'
 
     ### add item to cart
-    # check if there is already a cart
-    if 'cart' not in session: # check if there already is a cart
-        session['cart'] = []
-    # get current contents of cart
-    cart_list = session['cart']
+    cart = get_cart()
     # check if product is not already in cart
-    if not any(cart_item.get('id', -1) == pid for cart_item in cart_list):
+    if not in_cart(cart, pid):
         # if item not already in cart
-        cart_list.append(
+        cart.append(
             {
                 'id':pid,
                 'name':product_dict['name'],
@@ -129,12 +172,36 @@ def add_product_to_cart_session(pid, quantity):
         )
     else:
         # update quantity in cart
-        for cart_item in cart_list:
-            if cart_item.get('id', -1) == pid:
-                cart_item['quantity'] += 1
+        update_cart_value(cart, pid,'quantity', quantity)
     # set the session variable to the updated cart
-    session['cart'] = cart_list
-    return cart_list
+    set_cart(cart)
+
+    return cart
+
+# removes an item to cart Session and return the cart
+# cart stores id, price, quantity
+def remove_product_from_cart_session(pid, quantity):
+    # get a dictionary of the product from db
+    product_dict = get_product(pid)
+    # check if the requested quantity is available
+    if not is_in_stock(product_dict, quantity):
+        return "There is only " + product_dict['quantity'] + ' available'
+
+    ### add item to cart
+    cart = get_cart()
+    # check if product is not already in cart
+    if not in_cart(cart, pid):
+        # no product to remove, just return the cart
+        return cart
+    else:
+        # update quantity in cart
+        cart = remove_from_cart(cart, pid)
+    # set the session variable to the updated cart
+    set_cart(cart)
+
+    return cart
+
+
 
 
 ''' ************************************************************************ '''
@@ -281,7 +348,7 @@ def product(pid):
 # cart page
 @app.route("/cart/")
 def cart():
-    products = session['cart']
+    products = get_cart()
     return render_template("cart.html", products=products)
 
 # checkout page
@@ -397,7 +464,7 @@ def admin_save_edited_product(PID):
     verification = verify_admin_product("admin_edit_product.html", productName, description, quantity, price, productImg, category, PID)
     if verification != "":
         return verification
-    
+
     conn = get_db()
     c = conn.cursor()
 
@@ -440,6 +507,11 @@ def ajax_add_to_cart():
 def ajax_get_cart():
     cart = session['cart']
     return jsonify(cart)
+
+@app.route('/ajax_remove_item_from_cart/', methods=['GET'])
+def ajax_remove_item_from_cart():
+    session['cart'] = ""
+    return "Cart cleared"
 
 
 ''' errors handlers '''
