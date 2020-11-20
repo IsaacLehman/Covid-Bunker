@@ -6,6 +6,9 @@ window.addEventListener("DOMContentLoaded", function() {
   let add_to_cart_buttons = document.querySelectorAll('.add_to_cart');
   for (var i = 0; i < add_to_cart_buttons.length; i++) {
     add_to_cart_buttons[i].addEventListener('click', function(e) {
+      // add click anamation
+      this.classList.add('clicked');
+
       // get the VALUE
       let pid = e.target.value;
       ajax_add_to_cart(pid);
