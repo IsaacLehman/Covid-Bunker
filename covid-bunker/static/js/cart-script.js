@@ -12,16 +12,29 @@ window.addEventListener("DOMContentLoaded", function() {
     });
   }
 
+  let remove_from_cart_buttons = document.querySelectorAll('.remove_from_cart');
+  for (var i = 0; i < remove_from_cart_buttons.length; i++) {
+    remove_from_cart_buttons[i].addEventListener('click', function(e) {
+      // get the VALUE
+      let pid = e.target.value;
+      ajax_remove_from_cart(pid);
+    });
+  }
+
   // set num items in cart
   ajax_update_cart()
 });
 
 
-
+/* -------------------------------------------------------------------------- */
+/*                                FUNCTIONS                                   */
+/* -------------------------------------------------------------------------- */
 function get_num_items_in_cart(cart) {
     let num = 0;
-    for (i = 0; i < cart.length; i++) {
-      num += cart[i].quantity;
+    if(cart != null) { // if there are items in cart
+      for (i = 0; i < cart.length; i++) {
+        num += cart[i].quantity;
+      }
     }
     return num;
 }
@@ -29,10 +42,18 @@ function get_num_items_in_cart(cart) {
 function updateCartNumber(num_items_in_cart) {
   let car_nav_link = document.getElementById('cart-nav');
   let icon = '<i class="fas fa-shopping-cart"></i>'
-  let updated_text = icon + ' Cart ' + num_items_in_cart;
-  car_nav_link.innerHTML = updated_text;
+  if (num_items_in_cart > 0) {
+    let updated_text = icon + ' Cart ' + num_items_in_cart;
+    car_nav_link.innerHTML = updated_text;
+  } else {
+    let updated_text = icon + ' Cart ';
+    car_nav_link.innerHTML = updated_text;
+  }
 }
 
+/* -------------------------------------------------------------------------- */
+/*                           UPDATE CART NUMBER                               */
+/* -------------------------------------------------------------------------- */
 function ajax_update_cart() {
   path = '/ajax_get_cart/'; // where to send the request
   let http = new XMLHttpRequest();
@@ -52,9 +73,12 @@ function ajax_update_cart() {
   http.send();
 }
 
-// clears the cart
-function ajax_remove_product_from_cart(pID) {
-  path = '/ajax_add_to_cart/'; // where to send the request
+/* -------------------------------------------------------------------------- */
+/*                           REMOVE FROM CART                                 */
+/* -------------------------------------------------------------------------- */
+// removes a product from the cart
+function ajax_remove_from_cart(pID) {
+  path = '/ajax_remove_item_from_cart/'; // where to send the request
   request = 'pid=' + pID;
   let http = new XMLHttpRequest();
 
@@ -64,6 +88,10 @@ function ajax_remove_product_from_cart(pID) {
       let cart = JSON.parse(http.response);
       let num_items_in_cart = get_num_items_in_cart(cart);
       updateCartNumber(num_items_in_cart);
+
+      // remove product from page
+      document.getElementById(pID).remove();
+
 
     } else if(http.readyState == 4 && http.status != 200)  {
       // what to do if bad response
@@ -76,6 +104,9 @@ function ajax_remove_product_from_cart(pID) {
   http.send(request);
 }
 
+/* -------------------------------------------------------------------------- */
+/*                              ADD TO CART                                   */
+/* -------------------------------------------------------------------------- */
 // executes a request to a given path and returns the response
 function ajax_add_to_cart(pID) {
   path = '/ajax_add_to_cart/'; // where to send the request
@@ -91,7 +122,7 @@ function ajax_add_to_cart(pID) {
 
     } else if(http.readyState == 4 && http.status != 200)  {
       // what to do if bad response
-      console.log('bad ajax happened', http);
+      console.log('bad ajax happened', http.responses);
     }
   }
 

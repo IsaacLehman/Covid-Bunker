@@ -35,7 +35,7 @@
   </div>
   {% if products %}
   {% for product in products %}
-  <div class="container rounded shadow mb-4">
+  <div class="container rounded shadow mb-4" id="{{ product.id }}">
 
     <h1 class="display-3 text-center">{{product.name}}</h1>
 
@@ -57,8 +57,8 @@
             </h4>
           </div>
           <div class="col-sm-8 pb-2 text-right">
-            <button type="button" class="btn btn-info btn-lg">
-                <span class="glyphicon glyphicon-remove"></span> Remove 
+            <button type="button" value="{{ product.id }}" class="remove_from_cart btn btn-info btn-lg" onclick="this.blur();">
+                <span class="glyphicon glyphicon-remove"></span> Remove
               </button>
         </div>
     </div>

@@ -97,17 +97,22 @@ def is_in_stock(product, quantity):
 # returns a list of dictionaries (i.e. products)
 def get_cart():
     # check if there is already a cart
-    if 'cart' not in session: # check if there already is a cart
+    if 'cart' not in session or session['cart'] == None: # check if there already is a cart
         session['cart'] = []
     # get current contents of cart
-    return session['cart']
+    cart = session['cart']
+    return cart
 
 # sets session variable with cart list of dictionaries
 def set_cart(cart):
     session['cart'] = cart
 # returns true if product is in cart
 def in_cart(cart, pid):
-    return any(cart_item.get('id', -1) == pid for cart_item in cart)
+    try:
+        return any(cart_item.get('id', -1) == pid for cart_item in cart)
+    except Exception as e:
+        return False
+
 
 # set the value of a specific product in the cart
 def set_cart_value(pid, key, value):
@@ -123,7 +128,7 @@ def update_cart_value(cart, pid, key, value):
 
 # remove an item from the cart
 def remove_from_cart(cart, pid):
-    cart = [product for product in cart if product.get('id') != pid]
+    return [product for product in cart if product.get('id') != pid]
 
 # return a dictionary of a product given a pID
 def get_product(pid):
@@ -180,12 +185,9 @@ def add_product_to_cart_session(pid, quantity):
 
 # removes an item to cart Session and return the cart
 # cart stores id, price, quantity
-def remove_product_from_cart_session(pid, quantity):
+def remove_product_from_cart_session(pid):
     # get a dictionary of the product from db
     product_dict = get_product(pid)
-    # check if the requested quantity is available
-    if not is_in_stock(product_dict, quantity):
-        return "There is only " + product_dict['quantity'] + ' available'
 
     ### add item to cart
     cart = get_cart()
@@ -505,13 +507,14 @@ def ajax_add_to_cart():
 
 @app.route('/ajax_get_cart/', methods=['GET'])
 def ajax_get_cart():
-    cart = session['cart']
+    cart = get_cart()
     return jsonify(cart)
 
-@app.route('/ajax_remove_item_from_cart/', methods=['GET'])
+@app.route('/ajax_remove_item_from_cart/', methods=['POST'])
 def ajax_remove_item_from_cart():
-    session['cart'] = ""
-    return "Cart cleared"
+    pid = request.form.get('pid')
+    cart = remove_product_from_cart_session(pid)
+    return jsonify(cart)
 
 
 ''' errors handlers '''
