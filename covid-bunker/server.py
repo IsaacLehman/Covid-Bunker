@@ -120,7 +120,10 @@ def add_product_to_cart_session(pid, quantity):
         cart_list.append(
             {
                 'id':pid,
+                'name':product_dict['name'],
                 'price':product_dict['price'],
+                'img':product_dict['img'],
+                'description':product_dict['description'],
                 'quantity':quantity
             }
         )
@@ -278,7 +281,8 @@ def product(pid):
 # cart page
 @app.route("/cart/")
 def cart():
-    return render_template("cart.html")
+    products = session['cart']
+    return render_template("cart.html", products=products)
 
 # checkout page
 @app.route("/checkout/")
