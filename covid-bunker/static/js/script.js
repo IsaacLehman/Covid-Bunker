@@ -18,10 +18,25 @@ window.addEventListener("DOMContentLoaded", function() {
     }
   }
 
+  const cartButtons = document.querySelectorAll('.add_to_cart');
+
+  cartButtons.forEach(button => {
+  	button.addEventListener('click', cartClick);
+  });
+
 });
 
 // When the user clicks on the button, scroll to the top of the document
 function topFunction() {
   document.body.scrollTop = 0;
   document.documentElement.scrollTop = 0;
+}
+
+function cartClick() {
+	let button = this;
+  // add Attribute so when clicked again, nothing happens
+  button.setAttribute('disabled', true);
+  button.classList.add('cart-clicked');
+  // change text
+  button.innerHTML = 'Added <i class="fas fa-shopping-cart"></i>';
 }
