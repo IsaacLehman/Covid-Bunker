@@ -68,6 +68,25 @@ function get_cart_total(cart) {
     return total_price;
 }
 
+function empty_cart() {
+  let top_btn   = document.getElementById('top-buy-now-btn');
+  let bot_btn   = document.getElementById('bottom-cart-btns');
+  let empty_div = document.getElementById('cart-empty-div');
+
+  if (top_btn != null) {
+    top_btn.remove();
+  }
+
+  if (bot_btn != null) {
+    bot_btn.remove();
+  }
+
+  if (empty_div != null) {
+    empty_div.classList.remove('hidden');
+  }
+
+}
+
 function set_cart_total(cart) {
   let total_holder = document.getElementById('cart-icon-cart-page');
   if (total_holder == null) {
@@ -78,17 +97,6 @@ function set_cart_total(cart) {
   let total_price = get_cart_total(cart);
 
   if (total_price <= 0) {
-    let top_btn = document.getElementById('top-buy-now-btn');
-    let bot_btn = document.getElementById('bottom-cart-btns');
-
-    if (top_btn != null) {
-      top_btn.remove();
-    }
-
-    if (bot_btn != null) {
-      bot_btn.remove();
-    }
-
     total_holder.innerHTML = cart_text;
   } else {
     total_holder.innerHTML = cart_text + ' - ' + formatter.format(total_price);
@@ -118,6 +126,9 @@ function ajax_update_cart() {
     if(http.readyState == 4 && http.status == 200) {
       // what to do if response was good
       let cart = JSON.parse(http.response);
+      if(cart.length == 0) {
+        empty_cart();
+      }
       updateCartNumber(get_num_items_in_cart(cart));
       set_cart_total(cart);
     } else if(http.readyState == 4 && http.status != 200)  {
@@ -143,8 +154,10 @@ function ajax_remove_from_cart(pID) {
     if(http.readyState == 4 && http.status == 200) {
       // what to do if response was good
       let cart = JSON.parse(http.response);
-      let num_items_in_cart = get_num_items_in_cart(cart);
-      updateCartNumber(num_items_in_cart);
+      if(cart.length == 0) {
+        empty_cart();
+      }
+      updateCartNumber(get_num_items_in_cart(cart));
       set_cart_total(cart);
 
       // remove product from page
@@ -175,8 +188,8 @@ function ajax_add_to_cart(pID, quantity) {
     if(http.readyState == 4 && http.status == 200) {
       // what to do if response was good
       let cart = JSON.parse(http.response);
-      let num_items_in_cart = get_num_items_in_cart(cart);
-      updateCartNumber(num_items_in_cart);
+
+      updateCartNumber(get_num_items_in_cart(cart));
 
     } else if(http.readyState == 4 && http.status != 200)  {
       // what to do if bad response
