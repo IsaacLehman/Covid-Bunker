@@ -88,6 +88,11 @@ html, body {
 
 }
 
+/* Add shadows on hover */
+.card:hover {
+  box-shadow: 0 8px 12px 0 rgba(255, 193, 7, 0.2) !important;
+}
+
 /* ----------------------------------- */
 /* scroll to top */
 #topBtn {
