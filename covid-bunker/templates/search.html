@@ -42,7 +42,7 @@
     <div class="row align-items-center">
         <div class="col-sm-4 mr-auto pb-2">
             <h4>
-            Price: ${{product.price}}<br>
+            Price: {{ "$%.2f"|format(product.price) }}<br>
             In stock: {{product.quantity}}
             </h4>
           </div>
