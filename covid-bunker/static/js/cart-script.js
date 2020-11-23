@@ -41,6 +41,13 @@ window.addEventListener("DOMContentLoaded", function() {
 /* -------------------------------------------------------------------------- */
 /*                                FUNCTIONS                                   */
 /* -------------------------------------------------------------------------- */
+// format into currency
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2
+})
+
 function get_num_items_in_cart(cart) {
     let num = 0;
     if(cart != null) { // if there are items in cart
@@ -49,6 +56,43 @@ function get_num_items_in_cart(cart) {
       }
     }
     return num;
+}
+
+function get_cart_total(cart) {
+    let total_price = 0.0;
+    if(cart != null) { // if there are items in cart
+      for (i = 0; i < cart.length; i++) {
+        total_price += cart[i].price;
+      }
+    }
+    return total_price;
+}
+
+function set_cart_total(cart) {
+  let total_holder = document.getElementById('cart-icon-cart-page');
+  if (total_holder == null) {
+    return;
+  }
+  let cart_text = '<i class="fas fa-shopping-cart"></i> Total';
+
+  let total_price = get_cart_total(cart);
+
+  if (total_price <= 0) {
+    let top_btn = document.getElementById('top-buy-now-btn');
+    let bot_btn = document.getElementById('bottom-cart-btns');
+
+    if (top_btn != null) {
+      top_btn.remove();
+    }
+
+    if (bot_btn != null) {
+      bot_btn.remove();
+    }
+
+    total_holder.innerHTML = cart_text;
+  } else {
+    total_holder.innerHTML = cart_text + ' - ' + formatter.format(total_price);
+  }
 }
 
 function updateCartNumber(num_items_in_cart) {
@@ -75,6 +119,7 @@ function ajax_update_cart() {
       // what to do if response was good
       let cart = JSON.parse(http.response);
       updateCartNumber(get_num_items_in_cart(cart));
+      set_cart_total(cart);
     } else if(http.readyState == 4 && http.status != 200)  {
       // what to do if bad response
       console.log('bad ajax happened');
@@ -100,6 +145,7 @@ function ajax_remove_from_cart(pID) {
       let cart = JSON.parse(http.response);
       let num_items_in_cart = get_num_items_in_cart(cart);
       updateCartNumber(num_items_in_cart);
+      set_cart_total(cart);
 
       // remove product from page
       document.getElementById(pID).remove();

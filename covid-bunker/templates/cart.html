@@ -25,12 +25,14 @@
     <br>
   <div class="container">
       <div class="row">
-        <div class="col-md-6 text-left">
+        <div class="col-6 text-left">
             <h1><i class="fas fa-shopping-cart"></i> Cart</h1>
         </div>
-        <div class="col-md-6 text-right">
+        {% if products %}
+        <div class="col-6 text-right" id="top-buy-now-btn">
             <button type="button"  class="btn btn-lg btn-danger mb-2" onclick="this.blur();">Buy now</button>
         </div>
+        {% endif %}
     </div>
   </div>
   {% if products %}
@@ -64,6 +66,18 @@
     </div>
   </div>
   {% endfor %}
+  <div class="container"  id="bottom-cart-btns">
+    <div class="row pt-3 pb-5">
+      <div class="col-12 text-right">
+          <h1 id="cart-icon-cart-page"><i class="fas fa-shopping-cart"></i> Total</h1>
+      </div>
+      <div class="col-12 text-right">
+          <button type="button"  class="btn btn-lg btn-danger mb-2" onclick="this.blur();">Buy now</button>
+      </div>
+    </div>
+  </div>
   {% endif %}
+
+
 
 {% endblock %}
