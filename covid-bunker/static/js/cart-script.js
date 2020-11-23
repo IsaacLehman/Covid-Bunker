@@ -11,14 +11,23 @@ window.addEventListener("DOMContentLoaded", function() {
 
       // get the VALUE
       let pid = e.target.value;
-      ajax_add_to_cart(pid);
+
+      // get the quantity selected (if available)
+      let quantity = 1;
+      let quantity_selector = document.getElementById(`quantity-select-${pid}`);
+      if (quantity_selector != null) {
+          quantity = quantity_selector.value;
+          console.log('value', quantity);
+      }
+
+      ajax_add_to_cart(pid, quantity);
     });
   }
 
   let remove_from_cart_buttons = document.querySelectorAll('.remove_from_cart');
   for (var i = 0; i < remove_from_cart_buttons.length; i++) {
     remove_from_cart_buttons[i].addEventListener('click', function(e) {
-      // get the VALUE
+      // get the pID VALUE
       let pid = e.target.value;
       ajax_remove_from_cart(pid);
     });
@@ -111,9 +120,9 @@ function ajax_remove_from_cart(pID) {
 /*                              ADD TO CART                                   */
 /* -------------------------------------------------------------------------- */
 // executes a request to a given path and returns the response
-function ajax_add_to_cart(pID) {
+function ajax_add_to_cart(pID, quantity) {
   path = '/ajax_add_to_cart/'; // where to send the request
-  request = 'pid=' + pID;
+  request = `pid=${pID}&quantity=${quantity}`;//'pid=' + pID;
   let http = new XMLHttpRequest();
 
   http.onreadystatechange = function(){

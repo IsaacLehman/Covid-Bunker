@@ -344,7 +344,7 @@ def product(pid):
     product = c.execute('''
     SELECT pID, name, description, price, qty, ImgURL, category FROM Products where pID = ?;
     ''', (pid,)).fetchone()
-    
+
     product = map_product_query_result(product)
     return render_template("product_single.html", product=product)
 
@@ -501,6 +501,10 @@ def ajax_add_to_cart():
     quantity = 1
     if 'quantity' in request.form:
         quantity = request.form.get('quantity')
+        try:
+            quantity = int(quantity)
+        except Exception as e:
+            return "ERROR: Quantity must be an integer", 400
 
     cart = add_product_to_cart_session(pid, quantity)
 
