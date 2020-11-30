@@ -27,10 +27,6 @@ if ($gClient->getAccessToken()) {
         'first_name'    => $gpUserProfile['given_name'],
         'last_name'     => $gpUserProfile['family_name'],
         'email'         => $gpUserProfile['email'],
-        'gender'        => $gpUserProfile['gender'],
-        'locale'        => $gpUserProfile['locale'],
-        'picture'       => $gpUserProfile['picture'],
-        'link'          => $gpUserProfile['link']
     );
     $userData = $user->checkUser($gpUserData);
 	
@@ -44,10 +40,7 @@ if ($gClient->getAccessToken()) {
         $output .= '<br/>Google ID : ' . $userData['oauth_uid'];
         $output .= '<br/>Name : ' . $userData['first_name'].' '.$userData['last_name'];
         $output .= '<br/>Email : ' . $userData['email'];
-        $output .= '<br/>Gender : ' . $userData['gender'];
-        $output .= '<br/>Locale : ' . $userData['locale'];
         $output .= '<br/>Logged in with : Google';
-        $output .= '<br/><a href="'.$userData['link'].'" target="_blank">Click to Visit Google+ Page</a>';
         $output .= '<br/>Logout from <a href="logout.php">Google</a>'; 
     }else{
         $output = '<h3 style="color:red">Some problem occurred, please try again.</h3>';
@@ -60,7 +53,7 @@ if ($gClient->getAccessToken()) {
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Login with Google using PHP by CodexWorld</title>
+<title>Login with Google</title>
 <style type="text/css">
 h1{font-family:Arial, Helvetica, sans-serif;color:#999999;}
 </style>
