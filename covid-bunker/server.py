@@ -28,6 +28,11 @@ import random
 import urllib
 import sqlite3
 import os
+import smtplib, ssl, email
+from email import encoders
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
 
 ''' ************************************************************************ '''
 '''                                APP SET UP                                '''
@@ -40,6 +45,15 @@ app.config["SECRET_KEY"] = "!kn4fs%dkl#JED*BKS89" # Secret Key for Sessions
 UPLOAD_FOLDER = 'static\img'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'gif'}
+
+
+''' ************************************************************************ '''
+'''                                APP SET UP                                '''
+''' ************************************************************************ '''
+gmail_user = 'comp342gccf19@gmail.com'
+gmail_password = 'P@$$word1!'
+gmail_admin = 'ciremt58@gmail.com'
+
 ''' ************************************************************************ '''
 '''                              DATABASE SET UP                             '''
 ''' ************************************************************************ '''
@@ -371,18 +385,22 @@ def cart():
 def checkout(PID=0, quantity=1):
     products = []
     if (PID == 0):
+        #Get the cart
         products = get_cart()
     else:
         #Connect to the database
         conn = get_db()
         c = conn.cursor()
 
+        #Get the product that is being bought now
         product = c.execute('''
         SELECT * FROM Products WHERE PID=?;
         ''', (PID, )).fetchone()
+
         if (product is None or product==""):
             products = "" 
         else:
+            #Set the product quantity to the quantity to be purchased
             product = map_product_query_result(product)
             product['quantity']=quantity
             products.append(product)
@@ -398,10 +416,12 @@ def purchase():
     #THIS NEEDS TO BE CHANGED
     userID = 1
 
+    #Return to checkout if no items were puchased
     if (purchasedItems == ""):
         return redirect(url_for("checkout"))
     print(purchasedItems)
 
+    #Find the total cost of the items purchased
     sum = 0
     for product in purchasedItems:
         costPerItem = product['price']
@@ -411,32 +431,57 @@ def purchase():
     conn = get_db()
     c = conn.cursor()
 
+    #Create the sale
     date = datetime.now()
     c.execute('''
     INSERT INTO Sales (Total, UID, Date, Status) VALUES (?, ?, ?, "Waiting to be shipped");
     ''', (sum, userID, date))
     conn.commit()
 
+    #Find the sale ID
     sales = c.execute('''
     SELECT SID FROM Sales WHERE Total=? AND UID=? AND Date=?;
     ''', (sum, userID, date)).fetchone()
     saleID=sales[0]
 
+    #For each product sold
     for product in purchasedItems:
+        #Enter the purchase into the database
         c.execute('''
         INSERT INTO ProductsSold (SID, PID, Qty, PricePer) VALUES (?, ?, ?, ?);
         ''', (saleID, product['id'], product['quantity'], product['price']))
-
         conn.commit()
+
+        #Update the quantity
         c.execute('''
         UPDATE Products SET Qty=Qty-? WHERE PID=?;
         ''', (product['quantity'], product['id']))
         conn.commit()
+
+        #Remove the item from the cart
         if product in get_cart():
             print("Remove from cart")
             cart = remove_from_cart(get_cart(), product['id'])
             set_cart(cart)
 
+    #Send an email to the admin
+    message = MIMEMultipart("alternative")
+    message["Subject"] = "Product purchased"
+    message["From"] = "Covid Bunker"
+    message["To"] = "Admin"
+
+    #The content of the email
+    html = render_template("product_display.html", product=purchasedItems[0])
+    payload = MIMEText(html, "html")
+    message.attach(payload)
+
+    #Email the admin
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        server.login(gmail_user, gmail_password)
+        server.sendmail(
+            gmail_user, gmail_admin, message.as_string()
+        )
     session['itemsPurchased'] = ""
     return redirect(url_for("home"))
 
