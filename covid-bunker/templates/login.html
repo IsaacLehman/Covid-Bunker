@@ -10,17 +10,20 @@ active
 {% endblock %}
 
 {% block logged_out %}
-    {% if signed_in %}
+    {% if session.signed_in %}
     {% else %}
         {{ super() }}
     {% endif %}
 {% endblock %}
 
 {% block logged_in %}
-    {% if signed_in %}
+    {% if session.signed_in %}
         {{ super() }}
     {% else %}
     {% endif %}
+{% endblock %}
+
+{% block search %}
 {% endblock %}
 
 {% block content %}
@@ -30,6 +33,7 @@ active
     <script src="https://apis.google.com/js/platform.js" async defer></script>
   </head>
   <body>
+    <div class="container">
     <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
     <script>
       function onSignIn(googleUser) {
@@ -47,5 +51,15 @@ active
         console.log("ID Token: " + id_token);
       }
     </script>
+
+<p>
+  <form method="POST">
+    <label for="owner">UID: </label>
+    <input type="text" name="uid" id="uid"> <br/>
+    <input type="submit" name="sub" value="Login">
+  </form>
+</p>
+
+</div>
   </body>
 {% endblock %}

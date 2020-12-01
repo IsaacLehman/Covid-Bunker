@@ -10,14 +10,14 @@
 {% endblock %}
 
 {% block logged_out %}
-    {% if signed_in %}
+    {% if session.signed_in %}
     {% else %}
         {{ super() }}
     {% endif %}
 {% endblock %}
 
 {% block logged_in %}
-    {% if signed_in %}
+    {% if session.signed_in %}
         {{ super() }}
     {% else %}
     {% endif %}

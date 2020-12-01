@@ -294,7 +294,7 @@ def home():
 
     # TODO: FILTER out products that are out of stock
 
-    return render_template("home.html", products=modified_products, num_products=len(modified_products), featured_products=featured_products, signed_in=False)
+    return render_template("home.html", products=modified_products, num_products=len(modified_products), featured_products=featured_products)
 
 ### SEARCH ###
 # search results
@@ -341,7 +341,9 @@ def login_get():
 # login page (after login submission)
 @app.route("/login/", methods=['POST'])
 def login_post():
-    return render_template("login.html")
+    session['uid'] = request.form.get("uid")
+    session['signed_in'] = True
+    return redirect(url_for("profile"))
 
 ### REGISTER ###
 # register page
