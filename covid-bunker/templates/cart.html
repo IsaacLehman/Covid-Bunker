@@ -30,7 +30,10 @@
         </div>
         {% if products %}
         <div class="col-6 text-right" id="top-buy-now-btn">
+          <a href="{{url_for("checkout")}}">
             <button type="button"  class="btn btn-lg btn-danger mb-2" onclick="this.blur();">Buy now</button>
+          </a>
+            
         </div>
         {% endif %}
     </div>
@@ -72,7 +75,9 @@
           <h1 id="cart-icon-cart-page"><i class="fas fa-shopping-cart"></i> Total</h1>
       </div>
       <div class="col-12 text-right">
+        <a href="{{url_for("checkout")}}">
           <button type="button"  class="btn btn-lg btn-danger mb-2" onclick="this.blur();">Buy now</button>
+        </a>
       </div>
     </div>
   </div>

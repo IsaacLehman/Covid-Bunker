@@ -22,6 +22,7 @@ from flask import request, session, flash
 from flask import redirect, url_for
 from flask import g
 from flask import jsonify
+from datetime import datetime
 from werkzeug.utils import secure_filename
 import random
 import urllib
@@ -245,7 +246,7 @@ def verify_admin_product(template_name, productName, description, quantity, pric
     if not allowed_file(productImg.filename) and template_name == "admin_add_product.html":
         flash("Please upload a jpg or a png")
         return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
-        
+
     return ""
 ''' ************************************************************************ '''
 '''                               ROUTE HANDLERS                             '''
@@ -365,8 +366,79 @@ def cart():
 
 # checkout page
 @app.route("/checkout/")
-def checkout():
-    return render_template("checkout.html")
+@app.route("/checkout/<int:PID>")
+@app.route("/checkout/<int:PID>/<int:quantity>")
+def checkout(PID=0, quantity=1):
+    products = []
+    if (PID == 0):
+        products = get_cart()
+    else:
+        #Connect to the database
+        conn = get_db()
+        c = conn.cursor()
+
+        product = c.execute('''
+        SELECT * FROM Products WHERE PID=?;
+        ''', (PID, )).fetchone()
+        if (product is None or product==""):
+            products = "" 
+        else:
+            product = map_product_query_result(product)
+            product['quantity']=quantity
+            products.append(product)
+
+    
+    session['itemsPurchased'] = products
+    return render_template("checkout.html", products=products)
+
+@app.route("/purchase_product/")
+def purchase():
+    purchasedItems = session.get("itemsPurchased")
+
+    #THIS NEEDS TO BE CHANGED
+    userID = 1
+
+    if (purchasedItems == ""):
+        return redirect(url_for("checkout"))
+    print(purchasedItems)
+
+    sum = 0
+    for product in purchasedItems:
+        costPerItem = product['price']
+        sum += costPerItem*product['quantity']
+
+    #Connect to the database
+    conn = get_db()
+    c = conn.cursor()
+
+    date = datetime.now()
+    c.execute('''
+    INSERT INTO Sales (Total, UID, Date, Status) VALUES (?, ?, ?, "Waiting to be shipped");
+    ''', (sum, userID, date))
+    conn.commit()
+
+    sales = c.execute('''
+    SELECT SID FROM Sales WHERE Total=? AND UID=? AND Date=?;
+    ''', (sum, userID, date)).fetchone()
+    saleID=sales[0]
+
+    for product in purchasedItems:
+        c.execute('''
+        INSERT INTO ProductsSold (SID, PID, Qty, PricePer) VALUES (?, ?, ?, ?);
+        ''', (saleID, product['id'], product['quantity'], product['price']))
+
+        conn.commit()
+        c.execute('''
+        UPDATE Products SET Qty=Qty-? WHERE PID=?;
+        ''', (product['quantity'], product['id']))
+        conn.commit()
+        if product in get_cart():
+            print("Remove from cart")
+            cart = remove_from_cart(get_cart(), product['id'])
+            set_cart(cart)
+
+    session['itemsPurchased'] = ""
+    return redirect(url_for("home"))
 
 # checkout confirmation page
 @app.route("/checkout_confirmation/")
