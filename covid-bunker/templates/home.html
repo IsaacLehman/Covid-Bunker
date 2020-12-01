@@ -112,7 +112,10 @@
               <p class="card-text text-light text-center">{{ "$%.2f"|format(product.price) }}</p>
               <div class="d-flex justify-content-center">
                 <button type="button" value="{{ product.id }}" class="add_to_cart btn btn-warning mr-1" onclick="this.blur();">Add to cart</button>
-                <button type="button" value="{{ product.id }}" class="btn btn-danger ml-1" onclick="this.blur();">Buy it now</button>
+                <a href="{{url_for("checkout", PID=product.id)}}">
+                    <button type="button" value="{{ product.id }}" class="btn btn-danger ml-1" onclick="this.blur();">Buy it now</button>
+                </a>
+                
               </div>
             </div>
         </div>

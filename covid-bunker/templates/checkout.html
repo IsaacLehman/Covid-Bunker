@@ -19,7 +19,64 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <p>Hey there, you are home :)</p>
-</div>
+<br>
+  <div class="container">
+      <div class="row">
+        <div class="col-6 text-left">
+            <h1> Items To Purchase</h1>
+        </div>
+        {% if products %}
+        <div class="col-6 text-right" id="top-buy-now-btn">
+          <a href="{{url_for("purchase")}}">
+            <button type="button"  class="btn btn-lg btn-danger mb-2" onclick="this.blur();">Purchase</button>
+          </a>
+            
+        </div>
+        {% endif %}
+    </div>
+  </div>
+  {% if products %}
+  {% for product in products %}
+  <div class="container rounded shadow mb-4" id="{{ product.id }}">
+
+    <h1 class="display-5 text-center">{{product.name}}</h1>
+
+    <div class="row">
+        <div class="col-md-4 col-6">
+            <img src="/static/img/{{product.img}}" alt="{{product.name}}" class="img-fluid rounded shadow">
+        </div>
+        <div class="col-md-8 col-6 pt-2">
+            <p class="lead">{{product.description}} </p>
+        </div>
+
+    </div>
+    <hr class="my-4">
+    <div class="row align-items-center">
+        <div class="col-sm-4 mr-auto pb-2">
+            <h4>
+            Price: {{ "$%.2f"|format(product.price) }}<br>
+            Quantity: {{product.quantity}}
+            </h4>
+          </div>
+    </div>
+  </div>
+  {% endfor %}
+  <div class="container"  id="bottom-cart-btns">
+    <div class="row pt-3 pb-5">
+      <div class="col-12 text-right">
+          <h1 id="cart-icon-cart-page"><i class="fas fa-shopping-cart"></i> Total</h1>
+      </div>
+      <div class="col-12 text-right">
+        <a href="{{url_for("purchase")}}">
+            <button type="button"  class="btn btn-lg btn-danger mb-2" onclick="this.blur();">Purchase</button>
+        </a>  
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  <div class="container text-center hidden" id="cart-empty-div">
+    <h1 class="display-4 text-center pt-5">Your cart is empty...</h1>
+    <br />
+    <a href="/" class="btn btn-lg btn-success">Go Find Something :)</a>
+  </div>
 {% endblock %}
