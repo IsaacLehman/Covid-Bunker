@@ -62,7 +62,7 @@ function get_cart_total(cart) {
     let total_price = 0.0;
     if(cart != null) { // if there are items in cart
       for (i = 0; i < cart.length; i++) {
-        total_price += cart[i].price;
+        total_price += cart[i].quantity*cart[i].price;
       }
     }
     return total_price;
