@@ -341,6 +341,15 @@ def login_get():
 # login page (after login submission)
 @app.route("/login/", methods=['POST'])
 def login_post():
+    uid = request.form.get("uid")
+    c = get_db().cursor()
+    users = c.execute("SELECT uid from Users where uid=?", (uid,)).fetchall()
+
+    if len(users) == 0:
+        flash("invalid uid")
+        return redirect(url_for("login_get"))
+
+
     session['uid'] = request.form.get("uid")
     session['signed_in'] = True
     return redirect(url_for("profile"))
