@@ -32,50 +32,52 @@
         href="https://freepngimg.com/download/spoon/89626-fork-restaurant-food-photography-icons-computer-monochrome.png">
 </head>
 <body class="bg-secondary">
-    <button onclick="topFunction()" id="topBtn" class="btn-warning" title="Go to top"><i class="fas fa-arrow-circle-up"></i></button>
-    <header>
-        {% block header %}
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
-            <div class="container">
-                <a class="navbar-brand" href="{{ url_for('home') }}">Covid Bunker</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                  <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="nav navbar-nav navbar-right ml-auto">
-                       <li class="nav-item"><a href="/cart/" id="cart-nav" class="nav-link"><i class="fas fa-shopping-cart"></i> Cart</a></li>
-                        {% block logged_out %}
-                        <li class="nav-item {% block register %}{% endblock %}"><a href="/register/" class="nav-link"><i class="fas fa-user"></i> Register</a></li>
-                        <li class="nav-item {% block login %}{% endblock %}"><a href="/login/" class="nav-link"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-                        {% endblock %}
-                        {% block logged_in %}
-                        <li class="nav-item {% block profile %}{% endblock %}"><a href="/admin/" class="nav-link"><i class="fas fa-user"></i> Profile</a></li>
-                        <li class="nav-item {% block logout %}{% endblock %}"><a href="/" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                        {% endblock %}
-                    </ul>
+    <button onclick="topFunction()" id="topBtn" title="Go to top"><i class="fas fa-arrow-circle-up"></i></button>
+    <div class="main-body">
+        <header>
+            {% block header %}
+            <nav class="navbar navbar-expand-lg navbar-light bg-dark">
+                <div class="container">
+                    <a class="navbar-brand" href="{{ url_for('home') }}">Covid Bunker</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                      <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="nav navbar-nav navbar-right ml-auto">
+                           <li class="nav-item {% block cart %}{% endblock %}"><a href="/cart/" id="cart-nav" class="nav-link"><i class="fas fa-shopping-cart"></i> Cart</a></li>
+                            {% block logged_out %}
+                            <li class="nav-item {% block register %}{% endblock %}"><a href="/register/" class="nav-link"><i class="fas fa-user"></i> Register</a></li>
+                            <li class="nav-item {% block login %}{% endblock %}"><a href="/login/" class="nav-link"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                            {% endblock %}
+                            {% block logged_in %}
+                            <li class="nav-item {% block profile %}{% endblock %}"><a href="/admin/" class="nav-link"><i class="fas fa-user"></i> Profile</a></li>
+                            <li class="nav-item {% block logout %}{% endblock %}"><a href="/" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                            {% endblock %}
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </nav>
-        {% endblock %}
-    </header>
+            </nav>
+            {% endblock %}
+        </header>
 
-    {% block search %}
-    <div class="container pt-4 pb-4">
-        <form class="form-inline d-flex justify-content-center md-form form-sm" action="/search/" method="GET">
-          <input class="form-control form-control-sm mr-3 w-50" type="text" placeholder="Search..." aria-label="Search" name="s">
-          <button type="submit" value="Submit" class="btn-warning rounded"><i class="fas fa-search" aria-hidden="true"></i></button>
-        </form>
+        {% block search %}
+        <div class="container pt-4 pb-4">
+            <form class="form-inline d-flex justify-content-center md-form form-sm" action="/search/" method="GET">
+              <input class="form-control form-control-sm mr-3 w-50" type="text" placeholder="Search..." aria-label="Search" name="s">
+              <button type="submit" value="Submit" class="btn-warning rounded"><i class="fas fa-search" aria-hidden="true"></i></button>
+            </form>
+        </div>
+        {% endblock %}
+
+        <main class="text-light pb-5">
+            {% block content %}
+            {% endblock %}
+        </main>
     </div>
-    {% endblock %}
-
-    <main class="text-light pb-5">
-        {% block content %}
-        {% endblock %}
-    </main>
-
     {% block footer %}
-    <footer class="footer fixed-bottom p-1 bg-dark">
-        <div class="container">
+    <footer class="page-footer font-small bg-dark">
+         <!-- Copyright -->
+        <div class="container py-2 text-center">
             <span class="text-muted">&#169; 2020 Covid Bunker </span>
         </div>
         {% block footer_scripts %}
