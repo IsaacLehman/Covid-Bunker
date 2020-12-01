@@ -207,33 +207,45 @@ def remove_product_from_cart_session(pid):
 '''                               VERIFICATION REUSE                         '''
 ''' ************************************************************************ '''
 def verify_admin_product(template_name, productName, description, quantity, price, productImg, category, PID):
+    #Check the quantity
     try:
         quantity = int(quantity)
     except:
         flash("Quantity must be integer")
         return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
+    
+    #Check the price
     try:
         price = float(price)
     except:
         flash("Invalid price")
         return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
 
+    #Check the product Name
     if productName is None or productName == "":
         flash("You need a product name")
         return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
+    
+    #Check the product Image
     if (productImg is None or productImg == "") and template_name == "admin_add_product.html":
         flash("Please insert a picture of the product")
         return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
+    
+    #Check that the quanity is nonnegative
     if quantity is None or quantity < 0:
         flash("Quanity must be at least 0")
         return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
+    
+    #Check that the price is greater than 0
     if price is None or price <= 0:
         flash("This is a for-profit business. Charity is not allowed")
         return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
 
+    #Check that the image file is of allowed type
     if not allowed_file(productImg.filename) and template_name == "admin_add_product.html":
         flash("Please upload a jpg or a png")
         return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
+        
     return ""
 ''' ************************************************************************ '''
 '''                               ROUTE HANDLERS                             '''
@@ -365,70 +377,102 @@ def checkout_confirmation():
 # admin overview page
 @app.route("/admin/", methods=['GET'])
 def admin():
+    #Connect to the database
     conn = get_db()
     c = conn.cursor()
+
+    #Get all the products in the database
     products = c.execute('''
     SELECT * FROM Products;
     ''').fetchall()
+
+    #Total sales for each product 
     sales = {}
+
+    #The urls to edit a product
     urlsEdit = {}
+
+    #The urls to delete a product
     urlsDelete={}
+
+    #Make the products a dictionary
     products_dict = map_product_query_results(products)
 
+    #For all the products in the sytem
     for product in products_dict:
         sum = 0
+        #Find all the sales for a given item
         salePerItem = c.execute('''
         SELECT Qty, PricePer FROM ProductsSold WHERE PID=?;
         ''', (product['id'],)).fetchall()
+        #Find the sum of all the sales
         for singleSale in salePerItem:
             sum += int(singleSale[0])*float(singleSale[1])
+        #Store the sums to be displayed
         sales[product['id']] = "{:.2f}".format(sum)
+        #Create the urls
         urlsEdit[product['id']] = url_for("admin_edit_product", PID=product['id'])
         urlsDelete[product['id']]= url_for("admin_delete_product", PID=product['id'])
 
 
     return render_template("admin.html", urlAddProduct=url_for("admin_add_product"), urlsForEditProduct=urlsEdit, urlsForDeleteProduct=urlsDelete, products=products_dict, sales=sales)
 
+#Delete the product specified in the URL
 @app.route("/admin/<int:PID>/")
 def admin_delete_product(PID):
+    #Connect to the database
     conn = get_db()
     c = conn.cursor()
+
+    #Get the url of the image
     image_url = c.execute('''
     SELECT ImgURL FROM Products WHERE PID=?
     ''', (PID, )).fetchone()
     fullPath = os.path.join(app.config['UPLOAD_FOLDER'], image_url[0])
+
+    #Delete the saved image
     if os.path.exists(fullPath):
         os.remove(fullPath)
     else:
         print("Image could not be found")
+
+    #Delete the product from the database
     c.execute('''
     DELETE FROM Products WHERE PID=?
     ''', (PID, ))
     conn.commit()
     return redirect(url_for("admin"))
 
+#Add the product to the database
 @app.route("/admin-add-product/", methods=['POST'])
 def admin_post():
+    #Get the form fields
     productName = request.form.get("productName")
     productImg = request.files['product-img']
     description = request.form.get("description")
     quantity = request.form.get("quantity")
     price = request.form.get("price")
     category = request.form.get("category")
+
+    #Verify the fields
     verification = verify_admin_product("admin_add_product.html", productName, description, quantity, price, productImg, category, -1)
     if verification != "":
         return verification
 
+    #Save the image to the file system
     filename = secure_filename(productImg.filename)
     productImg.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-
+    #Connect to the database
     conn = get_db()
     c = conn.cursor()
+
+    #Insert the new product into the database
     c.execute('''
     INSERT INTO Products (Name, Description, Price, Qty, ImgURL, Category) VALUES (?, ?, ?, ?, ?, ?);
     ''', (productName, description, price, quantity, filename, category))
     conn.commit()
+
     return redirect(url_for("admin"))
 
 
@@ -440,54 +484,75 @@ def admin_add_product():
 # admin edit product page
 @app.route("/admin-edit-product/<int:PID>", methods=['GET'])
 def admin_edit_product(PID):
+    #Connect to the database
     conn = get_db()
     c = conn.cursor()
+
+    #Get the selected product from the database
     product = c.execute('''
     SELECT * FROM Products WHERE PID=?;
     ''', (PID,)).fetchone()
+
+    #Redirect to the admin main page if the product could not be found
     if product is None:
         flash("Product could not be found")
         return redirect(url_for("admin"))
+
+    #Turn the product into a dictionary
     product_dict =map_product_query_result(product)
+
     return render_template("admin_edit_product.html", productName=product_dict['name'], productImg=product_dict['img'], description=product_dict['description'], quantity=product_dict['quantity'], price=product_dict['price'], category=product_dict['category'], PID=product_dict['id'])
 
-
+#Save the edited product
 @app.route("/admin-edit-product/<int:PID>", methods=['POST'])
 def admin_save_edited_product(PID):
+    #Get the field from the form
     productName = request.form.get("productName")
     productImg = request.files['product-img']
     description = request.form.get("description")
     quantity = request.form.get("quantity")
     price = request.form.get("price")
     category = request.form.get("category")
-    print(PID)
+    
+    #Verify the fields
     verification = verify_admin_product("admin_edit_product.html", productName, description, quantity, price, productImg, category, PID)
     if verification != "":
         return verification
 
+    #Connect to the database
     conn = get_db()
     c = conn.cursor()
 
+    #If the user did upload a new image
     if (not allowed_file(productImg.filename)):
+        #Update the product
         c.execute('''
         UPDATE Products SET Name=?, Description=?, Price=?, Qty=?, Category=? WHERE PID=?;
         ''', (productName, description, price, quantity, category, PID))
     else:
+        #Get the old image
         image_url = c.execute('''
         SELECT ImgURL FROM Products WHERE PID=?
         ''', (PID, )).fetchone()
         fullPath = os.path.join(app.config['UPLOAD_FOLDER'], image_url[0])
+
+        #Remove the old image
         if os.path.exists(fullPath):
             os.remove(fullPath)
         else:
             print("Image could not be found")
+        
+        #Save the new image
         filename = secure_filename(productImg.filename)
         productImg.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+        #Save the edited product to the database
         c.execute('''
         UPDATE Products SET Name=?, Description=?, Price=?, Qty=?, ImgURL=?, Category=? WHERE PID=?;
         ''', (productName, description, price, quantity, filename, category, PID))
 
     conn.commit()
+
     return redirect(url_for("admin"))
 
 ''' ajax requests '''
