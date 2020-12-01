@@ -79,6 +79,10 @@ html, body {
   cursor: pointer;
 }
 
+.no-underline:hover{
+    text-decoration: none;
+}
+
 .hidden{
   display: none;
 }
