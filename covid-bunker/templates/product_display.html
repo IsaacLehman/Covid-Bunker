@@ -1,0 +1,31 @@
+
+
+
+
+<html>
+    <body>
+        <div class="container rounded shadow">
+
+            <h1 class="display-3 text-center">{{product.name}}</h1>
+          
+            <div class="row">
+                <div class="col-md-8 pt-2">
+                    <p class="lead">{{product.description}} </p>
+                </div>
+          
+            </div>
+            <hr class="my-4">
+            <div class="row align-items-center">
+                <div class="col-sm-4 mr-auto pb-2">
+                    <h4>
+                    Price: {{ "$%.2f"|format(product.price) }}<br>
+                    Quantity Purchased: {{product.quantity}}
+                    </h4>
+                  </div>
+          
+                </div>
+            </div>
+          </div>
+    </body>
+</html>
+
