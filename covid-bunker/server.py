@@ -354,6 +354,12 @@ def login_post():
     session['signed_in'] = True
     return redirect(url_for("profile"))
 
+@app.route("/logout/", methods=['GET'])
+def logout():
+    session['uid'] = None
+    session['signed_in'] = False
+    return redirect(url_for("home"))
+
 ### REGISTER ###
 # register page
 @app.route("/register/", methods=['GET'])
