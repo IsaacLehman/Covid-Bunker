@@ -4,6 +4,10 @@
 {{ super() }}
 {% endblock %}
 
+{% block cart %}
+active
+{% endblock %}
+
 {% block logged_out %}
     {% if signed_in %}
     {% else %}
@@ -33,7 +37,7 @@
           <a href="{{url_for("checkout")}}">
             <button type="button"  class="btn btn-lg btn-danger mb-2" onclick="this.blur();">Buy now</button>
           </a>
-            
+
         </div>
         {% endif %}
     </div>
