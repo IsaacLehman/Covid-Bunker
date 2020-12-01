@@ -10,7 +10,61 @@ html, body {
   /*background: #646464;*/
 }
 
+/* BACK GROUND COLOR */
+.bg-dark {
+    background-color: #ffe066 !important;
+}
 
+.bg-secondary {
+    background-color: #eaf4f4 !important;
+}
+
+/* TEXT COLOR */
+.text-light {
+    color: black !important;
+}
+
+.text-dark {
+    color: black !important;
+}
+
+.text-muted {
+    color: black !important;
+}
+
+/* BUTTON SUCCESS COLOR */
+.btn-success {
+    background-color: #52b788 ;
+    border-color: #52b788 ;
+}
+.btn-success:hover, .btn-success:focus, .btn-success:active {
+    background-color: #40916c !important;
+    border-color: #40916c !important;
+}
+
+
+/* BUTTON WARNING COLOR */
+.btn-warning {
+    background-color: #ffe580 ;
+    border-color: #ffe580 ;
+}
+.btn-warning:hover, .btn-warning:focus, .btn-warning:active {
+    background-color: #ffd633 !important;
+    border-color: #ffd633 !important;
+}
+
+
+/* BUTTON DANGER COLOR */
+.btn-danger {
+    background-color: #fe5f55 ;
+    border-color: #fe5f55 ;
+}
+.btn-danger:hover, .btn-danger:focus, .btn-danger:active {
+    background-color: #fe2f22 !important;
+    border-color: #fe2f22 !important;
+}
+
+/* CARD COLOR */
 .accent-bg{
     background-color: #fddb3a !important;
     color: black;
@@ -94,7 +148,7 @@ html, body {
 
 /* Add shadows on hover */
 .card:hover {
-  box-shadow: 0 8px 12px 0 rgba(255, 193, 7, 0.2) !important;
+  box-shadow: 0 8px 12px 0 rgba(100, 88, 40, 0.45) !important;
 }
 
 /* ----------------------------------- */
@@ -115,14 +169,27 @@ html, body {
   padding-top: 5px;
   padding-bottom: 5px;
   border-radius: 30px;
+
+  background-color: #ffd633;
 }
 
 #topBtn:hover {
-  background-color: #555;
+  background-color: #fe5f55;
 }
 
 /* ----------------------------------- */
 /* added to cart */
 .cart-clicked {
   /*color: #0a8214   !important;*/
+}
+
+/* ----------------------------------- */
+/* FOOTER */
+footer {
+    height: 2.5rem;
+}
+
+/* make the main page expand to fill page and just show footer */
+.main-body{
+    min-height: calc(100% - 2.5rem);
 }
