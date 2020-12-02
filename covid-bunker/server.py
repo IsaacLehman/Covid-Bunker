@@ -822,13 +822,25 @@ def sales_data():
 
 
 ''' errors handlers '''
+@app.errorhandler(400)
+def page_not_found_400(e):
+    return render_template("error.html", code=404, description="You Made A Bad Request"), 400
+
+@app.errorhandler(401)
+def page_not_found_401(e):
+    return render_template("error.html", code=404, description="Unauthorized Access"), 401
+
+@app.errorhandler(403)
+def page_not_found_403(e):
+    return render_template("error.html", code=404, description="Access Forbidden"), 403
+
 @app.errorhandler(404)
 def page_not_found_404(e):
-    return render_template("error.html", code=404, description="Not Found"), 404
+    return render_template("error.html", code=404, description="Page Not Found"), 404
 
 @app.errorhandler(500)
 def page_not_found_500(e):
-    return render_template("error.html", code=500, description="server error"), 500
+    return render_template("error.html", code=500, description="Internal Server Error"), 500
 
 
 if __name__ == "__main__":
