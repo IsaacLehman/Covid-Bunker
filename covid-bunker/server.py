@@ -475,9 +475,9 @@ def cart():
     return render_template("cart.html", products=products)
 
 # checkout page
-@app.route("/checkout/")
-@app.route("/checkout/<int:PID>")
-@app.route("/checkout/<int:PID>/<int:quantity>")
+@app.route("/checkout/", methods=['GET'])
+@app.route("/checkout/<int:PID>", methods=['GET'])
+@app.route("/checkout/<int:PID>/<int:quantity>", methods=['GET'])
 def checkout(PID=0, quantity=1):
     products = []
     total_price = 0.0
