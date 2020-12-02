@@ -24,6 +24,8 @@ from flask import g
 from flask import jsonify
 from datetime import datetime
 from werkzeug.utils import secure_filename
+from functools import wraps
+from datetime import timedelta
 import random
 import urllib
 import sqlite3
@@ -48,12 +50,55 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'gif'}
 
 
 ''' ************************************************************************ '''
-'''                                APP SET UP                                '''
+'''                                EMAIL SET UP                                '''
 ''' ************************************************************************ '''
 gmail_user = 'comp342gccf19@gmail.com'
 gmail_password = 'P@$$word1!'
 gmail_admin = 'ciremt58@gmail.com'
 
+''' ************************************************************************ '''
+'''                                LOGIN                                '''
+''' ************************************************************************ '''
+# define our login required wrapper
+def login_required(f):
+	@wraps(f)
+	def wrapper(*args, **kwargs):
+		# check that session has a uid that is still good
+		uid = session.get("uid")
+		try:
+			exp_str = session.get("expires",'')
+			exp = datetime.strptime(exp_str, "%Y-%m-%dT%H:%M:%SZ")
+		except ValueError:
+			exp = None
+		# if uid or exp is missing or exp has passed . . .
+		if uid is None or exp is None or exp < datetime.utcnow():
+			# here I return a forbidden error - you could redirect to login
+			return redirect(url_for("login_get"))
+		# only if the user is logged in should the route handler run
+		return f(*args, **kwargs)
+	return wrapper
+
+
+def is_admin(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+	    # check that session has a uid that is still good
+        admin = session.get("admin")
+        print(admin)
+        try:
+            exp_str = session.get("expires",'')
+            exp = datetime.strptime(exp_str, "%Y-%m-%dT%H:%M:%SZ")
+        except ValueError:
+            exp = None
+        # if uid or exp is missing or exp has passed . . .
+        print("Failed in final check")
+        if admin is None or exp is None or exp < datetime.utcnow() or admin is False:
+            # here I return a forbidden error - you could redirect to login
+            print("SHould not be here")
+            return redirect(url_for("login_get"))
+        # only if the user is logged in should the route handler run
+        return f(*args, **kwargs)
+    return wrapper
 ''' ************************************************************************ '''
 '''                              DATABASE SET UP                             '''
 ''' ************************************************************************ '''
@@ -346,7 +391,7 @@ def login_get():
 def login_post():
     uid = request.form.get("uid")
     c = get_db().cursor()
-    users = c.execute("SELECT uid from Users where uid=?", (uid,)).fetchall()
+    users = c.execute("SELECT uid, isAdmin from Users where uid=?", (uid,)).fetchone()
 
     if len(users) == 0:
         flash("invalid uid")
@@ -355,6 +400,13 @@ def login_post():
 
     session['uid'] = request.form.get("uid")
     session['signed_in'] = True
+    expires = datetime.utcnow()+timedelta(hours=24)
+    session["expires"] = expires.strftime("%Y-%m-%dT%H:%M:%SZ")
+    if users[1] == 0:
+        session['admin'] = False
+    else:
+        session['admin'] = True
+        return redirect(url_for("admin"))
     return redirect(url_for("profile"))
 
 @app.route("/logout/", methods=['GET'])
@@ -513,6 +565,7 @@ def checkout_confirmation():
 ### ADMIN ###
 # admin overview page
 @app.route("/admin/", methods=['GET'])
+@is_admin
 def admin():
     #Connect to the database
     conn = get_db()
@@ -556,6 +609,7 @@ def admin():
 
 #Delete the product specified in the URL
 @app.route("/admin/<int:PID>/")
+@is_admin
 def admin_delete_product(PID):
     #Connect to the database
     conn = get_db()
@@ -582,6 +636,7 @@ def admin_delete_product(PID):
 
 #Add the product to the database
 @app.route("/admin-add-product/", methods=['POST'])
+@is_admin
 def admin_post():
     #Get the form fields
     productName = request.form.get("productName")
@@ -615,11 +670,13 @@ def admin_post():
 
 # admin add product page
 @app.route("/admin-add-product/", methods=['GET'])
+@is_admin
 def admin_add_product():
     return render_template("admin_add_product.html", productName="", productImg="", description="", quantity="", price="", category="toilet paper")
 
 # admin edit product page
 @app.route("/admin-edit-product/<int:PID>", methods=['GET'])
+@is_admin
 def admin_edit_product(PID):
     #Connect to the database
     conn = get_db()
@@ -642,6 +699,7 @@ def admin_edit_product(PID):
 
 #Save the edited product
 @app.route("/admin-edit-product/<int:PID>", methods=['POST'])
+@is_admin
 def admin_save_edited_product(PID):
     #Get the field from the form
     productName = request.form.get("productName")
