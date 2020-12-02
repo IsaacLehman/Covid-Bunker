@@ -26,6 +26,10 @@
     {% block header_scripts %}
     <script src="{{ url_for('static', filename='js/script.js') }}" charset="utf-8"></script>
     <script src="{{ url_for('static', filename='js/cart-script.js') }}" charset="utf-8"></script>
+    <!-- Google Scripts -->
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="128673522219-v8ul49r61i5u4ujdqhohspk0lq4b4a9t.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
     {% endblock %}
     <link rel="icon"
         type="image/png"
@@ -50,17 +54,21 @@
                             <li class="nav-item {% block login %}{% endblock %}"><a href="/login/" class="nav-link"><i class="fas fa-sign-in-alt"></i> Login</a></li>
                             {% endblock %}
                             {% block logged_in %}
-                            <li class="nav-item {% block profile %}{% endblock %}"><a href="/admin/" class="nav-link"><i class="fas fa-user"></i> Profile</a></li>
+                            <li class="nav-item {% block profile %}{% endblock %}"><a href="/profile/" class="nav-link"><i class="fas fa-user"></i> Profile</a></li>
                             <li class="nav-item {% block logout %}{% endblock %}"><a href="/logout/" class="nav-link" onclick="signOut();"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                            <a href="#" onclick="signOut();">Sign out</a>
-                                <script>
-                                  function signOut() {
-                                    var auth2 = gapi.auth2.getAuthInstance();
-                                    auth2.signOut().then(function () {
-                                      console.log('User signed out.');
-                                    });
-                                  }
-                                </script>
+                            <script>
+                              function signOut() {
+                                var auth2 = gapi.auth2.getAuthInstance();
+                                auth2.signOut().then(function () {
+                                  console.log('User signed out.');
+                                });
+                              }
+                              function onLoad() {
+                                  gapi.load('auth2', function() {
+                                    gapi.auth2.init();
+                                  });
+                              }
+                            </script>
                             {% endblock %}
                         </ul>
                     </div>

@@ -28,17 +28,16 @@ active
 
 {% block content %}
 <head>
-
-    <meta name="google-signin-scope" content="profile email">
-    <meta name="google-signin-client_id" content="128673522219-v8ul49r61i5u4ujdqhohspk0lq4b4a9t.apps.googleusercontent.com">
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
   </head>
   <body>
     <div class="container pt-5 text-center">
         <div class="g-signin2" data-onsuccess="onSignIn"></div>
         <script>
           function onSignIn(googleUser) {
+              // get the profile information
               var profile = googleUser.getBasicProfile();
+
+              // for testing
               console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
               console.log('Name: ' + profile.getName());
               console.log('Image URL: ' + profile.getImageUrl());

@@ -433,6 +433,7 @@ def google_authentication_ajax():
         # ID token is valid. Get the user's Google Account ID from the decoded token.
         userid = idinfo['sub']
         session['uid'] = userid
+        session['signed_in'] = True
         return userid
     except Exception as e:
         print("Bad happened", e.message())
