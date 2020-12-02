@@ -538,7 +538,7 @@ def checkout(PID=0, quantity=1):
     session['purchaseCost'] = total_price
     return render_template("checkout.html", products=products, total_price=total_price)
 
-@app.route("/purchase_product/")
+@app.route("/checkout/", methods=['POST'])
 def purchase():
     purchasedItems = session.get("itemsPurchased")
 
@@ -625,12 +625,17 @@ def purchase():
             gmail_user, session.get("email"), message.as_string()
         )
     session['itemsPurchased'] = ""
-    return redirect(url_for("home"))
+    return redirect(url_for("checkout_confirmation"))
 
 # checkout confirmation page
 @app.route("/checkout_confirmation/")
 def checkout_confirmation():
-    return render_template("checkout_confirmation.html")
+    products = session.get("itemsPurchased")
+    total_price = session['purchaseCost']
+
+    session['itemsPurchased'] = ""
+    session['purchaseCost'] = 0
+    return render_template("checkout_confirmation.html", products=products, total_price=total_price)
 
 ### ADMIN ###
 # admin overview page
