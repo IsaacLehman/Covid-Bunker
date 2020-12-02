@@ -25,17 +25,32 @@
         <div class="col-6 text-left">
             <h1> Items To Purchase</h1>
         </div>
-        {% if products %}
-        <div class="col-6 text-right" id="top-buy-now-btn">
-          <a href="{{url_for("purchase")}}">
-            <button type="button"  class="btn btn-lg btn-danger mb-2" onclick="this.blur();">Purchase</button>
-          </a>
-
-        </div>
-        {% endif %}
     </div>
   </div>
   {% if products %}
+  <div class="container">
+    <div class="row">
+      <div class="container rounded shadow col-md-4 col-6">
+
+        <!-- FORM GOES HERE -->
+
+        <div class="container"  id="bottom-checkout-btns">
+          <div class="row pt-3 pb-5">
+            <div class="col-12 text-center">
+                <h1 id="cart-icon-checkout-page"><i class="fas fa-shopping-cart"></i> Total -  {{ "$%.2f"|format(total_price) }}</h1>
+            </div>
+            <div class="col-12 text-center">
+              <a href="{{url_for("purchase")}}">
+                  <button type="button"  class="btn btn-lg btn-danger mb-2" onclick="this.blur();">Purchase</button>
+              </a>
+            </div>
+          </div>
+        </div>
+
+
+
+      </div>
+      <div class="col-md-8">
   {% for product in products %}
   <div class="container rounded shadow mb-4" id="{{ product.id }}">
 
@@ -61,18 +76,13 @@
     </div>
   </div>
   {% endfor %}
-  <div class="container"  id="bottom-checkout-btns">
-    <div class="row pt-3 pb-5">
-      <div class="col-12 text-right">
-          <h1 id="cart-icon-checkout-page"><i class="fas fa-shopping-cart"></i> Total -  {{ "$%.2f"|format(total_price) }}</h1>
-      </div>
-      <div class="col-12 text-right">
-        <a href="{{url_for("purchase")}}">
-            <button type="button"  class="btn btn-lg btn-danger mb-2" onclick="this.blur();">Purchase</button>
-        </a>
-      </div>
+
+  </div>
     </div>
   </div>
+
+
+
   {% endif %}
   <div class="container text-center hidden" id="checkout-empty-div">
     <h1 class="display-4 text-center pt-5">Your cart is empty...</h1>
