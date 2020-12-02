@@ -22,6 +22,19 @@
 {% endblock %}
 
 {% block content %}
+<style>
+  input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+</style>
+
 <br>
   <div class="container">
       <div class="row">
@@ -43,13 +56,13 @@
         <!-- FORM GOES HERE -->
         <form action="/checkout/" method="POST">
 
-                <input id="ccn" placeholder="Credit card number" aria-label="Credit card number" type="text" name="ccn" required>
-                <input id="cvv" placeholder="CVV" aria-label="CVV" type="text" name="cvv" size="2" required>
+                <input id="ccn" placeholder="Credit card number" aria-label="Credit card number" type="number" name="ccn" required>
+                <input id="cvv" placeholder="CVV" aria-label="CVV" type="number" name="cvv" size="2" required>
               <br><br>
 
-                  <input id="exp-month" placeholder="Month" aria-label="Month" type="text" name="exp-mon" size="2" required>
+                  <input id="exp-month" placeholder="Month" aria-label="Month" type="number" name="exp-mon" size="2" required>
                   /
-                  <input id="exp-year" placeholder="Year" aria-label="Year" type="text" name="exp-year" size="2" required>
+                  <input id="exp-year" placeholder="Year" aria-label="Year" type="number" name="exp-year" size="2" required>
 
               <br><br>
               {% if address %}

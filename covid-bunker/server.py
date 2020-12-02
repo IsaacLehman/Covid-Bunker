@@ -564,6 +564,15 @@ def purchase():
         valid = False
         flash("Shipping address is required!")
 
+    try:
+        int(request.form.get("exp-ccn"))
+        int(request.form.get("exp-cvv"))
+        int(request.form.get("exp-mon"))
+        int(request.form.get("exp-year"))
+    except:
+        valid = False
+        flash("Illegal input!")
+
     if valid == False:
         return redirect(url_for("checkout")) 
     # if we mess up on an individual buy page, it won't take us back to it just yet
@@ -594,7 +603,7 @@ def purchase():
     c = conn.cursor()
 
     #Create the sale
-    
+    # """
     date = datetime.now()
     c.execute('''
     INSERT INTO Sales (Total, UID, Date, Status) VALUES (?, ?, ?, "Waiting to be shipped");
@@ -658,7 +667,7 @@ def purchase():
         server.sendmail(
             gmail_user, session.get("email"), message.as_string()
         )
-    
+    # """
     session['itemsPurchased'] = ""
     session['purchaseCost'] = 0
     return redirect(url_for("checkout_confirmation"))
