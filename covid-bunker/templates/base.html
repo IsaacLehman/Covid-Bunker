@@ -51,7 +51,16 @@
                             {% endblock %}
                             {% block logged_in %}
                             <li class="nav-item {% block profile %}{% endblock %}"><a href="/admin/" class="nav-link"><i class="fas fa-user"></i> Profile</a></li>
-                            <li class="nav-item {% block logout %}{% endblock %}"><a href="/logout/" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                            <li class="nav-item {% block logout %}{% endblock %}"><a href="/logout/" class="nav-link" onclick="signOut();"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                            <a href="#" onclick="signOut();">Sign out</a>
+                                <script>
+                                  function signOut() {
+                                    var auth2 = gapi.auth2.getAuthInstance();
+                                    auth2.signOut().then(function () {
+                                      console.log('User signed out.');
+                                    });
+                                  }
+                                </script>
                             {% endblock %}
                         </ul>
                     </div>

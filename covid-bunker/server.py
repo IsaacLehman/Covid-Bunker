@@ -10,6 +10,10 @@
         python -m flask run           (run the server)
     2.
         python server.py              (runs in debug mode)
+
+    Some pip stuff:
+    pip install --upgrade google-auth
+    pip install --upgrade requests
 """
 # set FLASK_APP=hello_world.py  (set the current server file to run)
 # python -m flask run           (run the server)
@@ -35,6 +39,8 @@ from email import encoders
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
+from google.oauth2 import id_token
+from google.auth.transport import requests
 
 ''' ************************************************************************ '''
 '''                                APP SET UP                                '''
@@ -414,6 +420,23 @@ def logout():
     session['uid'] = None
     session['signed_in'] = False
     return redirect(url_for("home"))
+
+### GOOGLE TOKEN AUTHENTICATION FOR LOGIN ###
+@app.route('/tokensignin/', methods=["POST"])
+def google_authentication_ajax():
+    # (Receive token by HTTPS POST)
+    token = request.form.get('idtoken')
+    try:
+        # Specify the CLIENT_ID of the app that accesses the backend:
+        idinfo = id_token.verify_oauth2_token(token, requests.Request(), "128673522219-v8ul49r61i5u4ujdqhohspk0lq4b4a9t.apps.googleusercontent.com")
+
+        # ID token is valid. Get the user's Google Account ID from the decoded token.
+        userid = idinfo['sub']
+        session['uid'] = userid
+        return userid
+    except Exception as e:
+        print("Bad happened", e.message())
+        return ""
 
 ### REGISTER ###
 # register page
