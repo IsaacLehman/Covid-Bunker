@@ -570,6 +570,7 @@ def purchase():
 
     address = request.form.get("address")
     get_db().cursor().execute("UPDATE Users SET address = ? WHERE uid = ?", (address, session['uid']))
+    get_db().commit()
 
 
     purchasedItems = session.get("itemsPurchased")
