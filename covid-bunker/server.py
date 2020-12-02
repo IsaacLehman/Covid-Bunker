@@ -565,10 +565,10 @@ def purchase():
         flash("Shipping address is required!")
 
     try:
-        i = int(request.form.get("ccn"))
-        i = int(request.form.get("cvv"))
-        i = int(request.form.get("exp-mon"))
-        i = int(request.form.get("exp-year"))
+        int(request.form.get("ccn"))
+        int(request.form.get("cvv"))
+        int(request.form.get("exp-mon"))
+        int(request.form.get("exp-year"))
     except:
         valid = False
         flash("Illegal input!")
@@ -603,7 +603,7 @@ def purchase():
     c = conn.cursor()
 
     #Create the sale
-    """
+    #"""
     date = datetime.now()
     c.execute('''
     INSERT INTO Sales (Total, UID, Date, Status) VALUES (?, ?, ?, "Waiting to be shipped");
@@ -667,7 +667,7 @@ def purchase():
         server.sendmail(
             gmail_user, session.get("email"), message.as_string()
         )
-    """
+    #"""
     session['itemsPurchased'] = ""
     session['purchaseCost'] = 0
     return redirect(url_for("checkout_confirmation"))
