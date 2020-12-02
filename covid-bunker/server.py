@@ -597,19 +597,32 @@ def purchase():
     message = MIMEMultipart("alternative")
     message["Subject"] = "Product purchased"
     message["From"] = "Covid Bunker"
-    message["To"] = "Admin"
+    message["To"] = session.get("name")
+
+    messageA = MIMEMultipart("alternative")
+    messageA["Subject"] = "Product purchased"
+    messageA["From"] = "Covid Bunker"
+    messageA["To"] = "Admin"
 
     #The content of the email
-    html = render_template("product_display.html", product=purchasedItems[0])
+    html = render_template("product_display.html", products=purchasedItems, admin="False")
     payload = MIMEText(html, "html")
     message.attach(payload)
+
+    #The content of the email
+    htmlA = render_template("product_display.html", products=purchasedItems, admin="True")
+    payloadA = MIMEText(htmlA, "html")
+    messageA.attach(payloadA)
 
     #Email the admin
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login(gmail_user, gmail_password)
         server.sendmail(
-            gmail_user, gmail_admin, message.as_string()
+            gmail_user, gmail_admin, messageA.as_string()
+        )
+        server.sendmail(
+            gmail_user, session.get("email"), message.as_string()
         )
     session['itemsPurchased'] = ""
     return redirect(url_for("home"))
@@ -855,20 +868,19 @@ def sales_data():
         date = str(datetime.strptime(sale.get("Date"), '%Y-%m-%d %H:%M:%S.%f').date())
 
         foundDate = False
-
         #Find the total for each date
         for data in output:
-            if date == data.get("Date"):
-                data['Total'] += int(sale.get("Total"))
+            
+            if date == data.get("Date") or date in data.get("Date"):
+                data['Total'] += float(sale.get("Total"))
                 foundDate = True
-            break
+                break
         if not foundDate:
             salePerDate = {
             'Date': date,
-            'Total': int(sale.get("Total"))
+            'Total': float(sale.get("Total"))
             }
             output.append(salePerDate)
-
     return jsonify(output)
 
 

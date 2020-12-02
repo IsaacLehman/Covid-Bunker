@@ -4,9 +4,18 @@
 
 <html>
     <body>
+        {%if admin == "True"%}
+            <h2>{{session.name}} has made a purchase</h2>
+        {%else%}
+            <h2>Thank you for your purchase</h2>
+        {%endif%}
+        {%for product in products%}
         <div class="container rounded shadow">
 
             <h1 class="display-3 text-center">{{product.name}}</h1>
+
+            
+
           
             <div class="row">
                 <div class="col-md-8 pt-2">
@@ -26,6 +35,7 @@
                 </div>
             </div>
           </div>
+          {%endfor%}
     </body>
 </html>
 
