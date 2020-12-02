@@ -485,6 +485,7 @@ def checkout(PID=0, quantity=1):
 
 
     session['itemsPurchased'] = products
+    session['purchaseCost'] = total_price
     return render_template("checkout.html", products=products, total_price=total_price)
 
 @app.route("/purchase_product/")
