@@ -24,18 +24,12 @@
 {% endblock %}
 
 {% block content %}
-{% for message in get_flashed_messages() %}
-	<div class="alert alert-warning">
-		<button type="button" class="close" data-dismiss="alert">&times;</button>
-		{{ message }}
-	</div>
-    {% endfor %}
     <h1 class="admin-title">Add a Product</h1>
 <div class="container">
     <form action="/admin-add-product/" method="POST", enctype="multipart/form-data">
 		<div class="form-group">
             <label for="productName"> Product Name: </label>
-            <input id="productName" type="text" name="productName" value="{{productName}}"> 
+            <input id="productName" type="text" name="productName" value="{{productName}}">
         </div>
         <div class="form-group">
             <label for="productImage">Product Image: </label>
@@ -55,7 +49,7 @@
             <input id="price" type="number" name="price" value="{{price}}" step="0.01">
         </div>
         <div class="form-group">
-            <label for="category">Category: </label>              
+            <label for="category">Category: </label>
             <select class="form-control" id="category" name="category">
                 <option {% if category == "toilet paper" %} selected{%endif%}>toilet paper</option>
                 <option {% if category == "masks" %} selected{%endif%}>masks</option>
