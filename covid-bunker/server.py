@@ -426,6 +426,9 @@ def logout():
 def google_authentication_ajax():
     # (Receive token by HTTPS POST)
     token = request.form.get('idtoken')
+    name = request.form.get('name')
+    img = request.form.get('img')
+    email = request.form.get('email')
     try:
         # Specify the CLIENT_ID of the app that accesses the backend:
         idinfo = id_token.verify_oauth2_token(token, requests.Request(), "128673522219-v8ul49r61i5u4ujdqhohspk0lq4b4a9t.apps.googleusercontent.com")
@@ -433,6 +436,9 @@ def google_authentication_ajax():
         # ID token is valid. Get the user's Google Account ID from the decoded token.
         userid = idinfo['sub']
         session['uid'] = userid
+        session['name'] = name
+        session['img'] = img
+        session['email'] = email
         session['signed_in'] = True
         return userid
     except Exception as e:
@@ -517,7 +523,7 @@ def purchase():
     purchasedItems = session.get("itemsPurchased")
 
     #THIS NEEDS TO BE CHANGED
-    userID = 1
+    userID = session['uid']####''' ''''
 
     #Return to checkout if no items were puchased
     if (purchasedItems == ""):
