@@ -30,8 +30,11 @@ active
 <head>
   </head>
   <body>
-    <div class="container pt-5 text-center">
-        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <div class="container mt-5 pt-5 text-center">
+        <div class="d-flex justify-content-center align-items-center pb-3">
+            <div class="g-signin2 rounded pl-2" data-width="200" data-height="50" data-onsuccess="onSignIn"></div>
+        </div>
+        <hr>
         <div class="container py-3" id="response-messages"></div>
         <script>
           function onSignIn(googleUser) {
@@ -43,6 +46,9 @@ active
               console.log('Name: ' + profile.getName());
               console.log('Image URL: ' + profile.getImageUrl());
               console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+              name = profile.getName();
+              image_url = profile.getImageUrl();
+              email = profile.getEmail();
 
               // get token for backend
               var id_token = googleUser.getAuthResponse().id_token;
@@ -54,9 +60,9 @@ active
               xhr.onload = function() {
                   console.log('Signed in as: ' + xhr.responseText);
                   let message_div = document.getElementById('response-messages');
-                  message_div.innerHTML = `<h3 class="display3">${profile.getName()}, you are logged in!</h3>`             
+                  message_div.innerHTML = `<h3 class="display3">${profile.getName()}, you are logged in!</h3>`
               };
-              xhr.send('idtoken=' + id_token);
+              xhr.send('idtoken=' + id_token + "&name=" + name + "&img=" + image_url + "&email=" + email);
 
           }
         </script>

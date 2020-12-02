@@ -24,6 +24,24 @@ active
 
 {% block content %}
 <div class="container">
-    <p>Hey there, you are home :)</p>
+    {% if session.signed_in %}
+    <div class="container py-3" id="profile-details"></div>
+    <script>
+          window.addEventListener("DOMContentLoaded", function() {
+              // get the profile information
+              name = "{{ session.name }}";
+              image_url = "{{ session.img }}";
+              email = "{{ session.email }}";
+              let output  = '<h1 class="display-3">Your Profile</h1>';
+              output += `<img src="${image_url}" class="py-2" alt="Profile Image"/>`;
+              output += `<h3>Name: ${name}</h3>`;
+              output += `<h3>Email: ${email}</h3>`;
+              console.log(output);
+
+              let profile_details = document.getElementById('profile-details');
+              profile_details.innerHTML = output;
+          });
+    </script>
+    {% endif %}
 </div>
 {% endblock %}
