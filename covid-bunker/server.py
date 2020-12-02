@@ -546,6 +546,31 @@ def checkout(PID=0, quantity=1):
 
 @app.route("/checkout/", methods=['POST'])
 def purchase():
+
+    valid = True
+
+    if request.form.get("ccn") is None or request.form.get("ccn") == "":
+        valid = False
+        flash("Credit Card Number is required!")
+    if request.form.get("cvv") is None or request.form.get("cvv") == "":
+        valid = False
+        flash("CVV is required!")
+    if request.form.get("exp-mon") is None or request.form.get("exp-mon") == "" or request.form.get("exp-year") is None or request.form.get("exp-year") == "":
+        valid = False
+        flash("Expiration date is required!")
+    if request.form.get("address") is None or request.form.get("address") == "":
+        valid = False
+        flash("Shipping address is required!")
+
+    if valid == False:
+        return redirect(url_for("checkout")) 
+    # if we mess up on an individual buy page, it won't take us back to it just yet
+
+
+
+
+
+
     purchasedItems = session.get("itemsPurchased")
 
     #THIS NEEDS TO BE CHANGED
