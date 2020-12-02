@@ -18,21 +18,43 @@
     {% endif %}
 {% endblock %}
 
+{% block search %}
+{% endblock %}
+
 {% block content %}
 <br>
   <div class="container">
       <div class="row">
-        <div class="col-6 text-left">
-            <h1> Items To Purchase</h1>
+        <div class="col-4 text-left">
+            <h1> Payment Info</h1>
         </div>
+        <div class="col-8 text-left">
+          <h1> Items To Purchase</h1>
+      </div>
     </div>
   </div>
   {% if products %}
   <div class="container">
     <div class="row">
-      <div class="container rounded shadow col-md-4 col-6">
+      <div class="container rounded shadow col-md-4 col-6c text-center">
 
         <!-- FORM GOES HERE -->
+        <form action="/checkout/" method="POST">
+
+                <input id="ccn" placeholder="Credit card number" aria-label="Credit card number" type="text" name="ccn" required>
+                <input id="cvv" placeholder="CVV" aria-label="CVV" type="text" name="cvv" size="2" required>
+              <br><br>
+
+                  <input id="exp-month" placeholder="Month" aria-label="Month" type="text" name="exp-mon" size="2" required>
+                  /
+                  <input id="exp-year" placeholder="Year" aria-label="Year" type="text" name="exp-year" size="2" required>
+
+              <br><br>
+                <input id="address" placeholder="Shipping address" aria-label="Shipping address" type="text" name="address" size="35" required>
+
+        </form>
+
+        <!-- Check out buttons -->
 
         <div class="container"  id="bottom-checkout-btns">
           <div class="row pt-3 pb-5">
