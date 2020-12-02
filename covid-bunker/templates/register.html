@@ -23,7 +23,37 @@ active
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <p>Hey there, you are home :)</p>
-</div>
+<head>
+
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="128673522219-v8ul49r61i5u4ujdqhohspk0lq4b4a9t.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+  </head>
+  <body>
+    <div class="container pt-5 text-center">
+        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+        <script>
+          function onSignIn(googleUser) {
+              var profile = googleUser.getBasicProfile();
+              console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+              console.log('Name: ' + profile.getName());
+              console.log('Image URL: ' + profile.getImageUrl());
+              console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+
+              // get token for backend
+              var id_token = googleUser.getAuthResponse().id_token;
+
+              // send token to back end
+              var xhr = new XMLHttpRequest();
+              xhr.open('POST', '/tokensignin/', true);
+              xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+              xhr.onload = function() {
+                console.log('Signed in as: ' + xhr.responseText);
+              };
+              xhr.send('idtoken=' + id_token);
+
+          }
+        </script>
+    </div>
+  </body>
 {% endblock %}
