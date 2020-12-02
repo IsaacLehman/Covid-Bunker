@@ -20,6 +20,14 @@
 
 {% block content %}
 <div class="container">
-    <p>Hey there, you are home :)</p>
+
+    <div class="container rounded shadow mb-4">
+  
+      <h1 class="display-5 text-center">Thank you for your purchase</h1>
+
+      <p class="lead"> A confirmation email has been sent to {{session.email}} </p>
+      <p class="lead"> Your package is on its way to: {{address}} </p>
+
+    </div>
 </div>
 {% endblock %}

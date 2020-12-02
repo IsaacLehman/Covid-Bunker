@@ -52,8 +52,11 @@
                   <input id="exp-year" placeholder="Year" aria-label="Year" type="text" name="exp-year" size="2" required>
 
               <br><br>
+              {% if address %}
+              <input id="address" placeholder="Shipping address" aria-label="Shipping address" type="text" name="address" size="35" value="{{address}}" required>
+              {% else %}
                 <input id="address" placeholder="Shipping address" aria-label="Shipping address" type="text" name="address" size="35" required>
-
+              {% endif %}
         
 
         <!-- Check out buttons -->

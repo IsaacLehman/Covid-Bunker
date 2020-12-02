@@ -510,6 +510,8 @@ def checkout(PID=0, quantity=1):
     if session['signed_in'] == False:
         return redirect(url_for("login_get"))
 
+    address = get_db().cursor().execute("select address from Users where uid = ?", (session['uid'],)).fetchone()[0]
+
 
     products = []
     total_price = 0.0
@@ -542,7 +544,7 @@ def checkout(PID=0, quantity=1):
 
     session['itemsPurchased'] = products
     session['purchaseCost'] = total_price
-    return render_template("checkout.html", products=products, total_price=total_price)
+    return render_template("checkout.html", products=products, total_price=total_price, address=address)
 
 @app.route("/checkout/", methods=['POST'])
 def purchase():
@@ -566,9 +568,8 @@ def purchase():
         return redirect(url_for("checkout")) 
     # if we mess up on an individual buy page, it won't take us back to it just yet
 
-
-
-
+    address = request.form.get("address")
+    get_db().cursor().execute("UPDATE Users SET address = ? WHERE uid = ?", (address, session['uid']))
 
 
     purchasedItems = session.get("itemsPurchased")
@@ -592,6 +593,7 @@ def purchase():
     c = conn.cursor()
 
     #Create the sale
+    
     date = datetime.now()
     c.execute('''
     INSERT INTO Sales (Total, UID, Date, Status) VALUES (?, ?, ?, "Waiting to be shipped");
@@ -655,17 +657,17 @@ def purchase():
         server.sendmail(
             gmail_user, session.get("email"), message.as_string()
         )
+    
+    session['itemsPurchased'] = ""
+    session['purchaseCost'] = 0
     return redirect(url_for("checkout_confirmation"))
 
 # checkout confirmation page
 @app.route("/checkout_confirmation/")
 def checkout_confirmation():
-    products = session.get("itemsPurchased")
-    total_price = session['purchaseCost']
+    address = get_db().cursor().execute("select address from Users where uid = ?", (session['uid'],)).fetchone()[0]
 
-    session['itemsPurchased'] = ""
-    session['purchaseCost'] = 0
-    return render_template("checkout_confirmation.html", products=products, total_price=total_price)
+    return render_template("checkout_confirmation.html", address=address)
 
 ### ADMIN ###
 # admin overview page
