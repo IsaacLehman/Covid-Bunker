@@ -733,7 +733,28 @@ def sales_data():
     #Change to a dictionary
     salesDict = map_sale_query_results(sales)
 
-    return jsonify(salesDict)
+    output = []
+
+    for sale in salesDict:
+        #Get just the date as a string
+        date = str(datetime.strptime(sale.get("Date"), '%Y-%m-%d %H:%M:%S.%f').date())
+
+        foundDate = False
+        
+        #Find the total for each date
+        for data in output:
+            if date == data.get("Date"):
+                data['Total'] += int(sale.get("Total"))
+                foundDate = True
+            break
+        if not foundDate:
+            salePerDate = {
+            'Date': date,
+            'Total': int(sale.get("Total"))
+            }
+            output.append(salePerDate)
+        
+    return jsonify(output)
 
 
 ''' errors handlers '''
