@@ -26,6 +26,7 @@ active
 <div class="container">
     {% if session.signed_in %}
     <div class="container py-3" id="profile-details"></div>
+    <a id="admin-button" class="btn btn-primary admin-button" href="{{url_for("admin")}}" role="button">Admin Side</a>
     <script>
           window.addEventListener("DOMContentLoaded", function() {
               // get the profile information
@@ -40,6 +41,12 @@ active
 
               let profile_details = document.getElementById('profile-details');
               profile_details.innerHTML = output;
+              let adminButton = document.getElementById("admin-button");
+              if ("{{session.admin}}" == "True") {                  
+                adminButton.style.visibility = "visible";
+              } else  {
+                adminButton.style.visibility = "hidden";
+              }
           });
     </script>
     {% endif %}

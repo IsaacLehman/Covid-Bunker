@@ -440,6 +440,26 @@ def google_authentication_ajax():
         session['img'] = img
         session['email'] = email
         session['signed_in'] = True
+
+        #Connect to the database
+        conn = get_db()
+        c = conn.cursor()
+
+        #Get the product that is being bought now
+        user = c.execute('''
+        SELECT isAdmin FROM Users WHERE UID=?;
+        ''', (userid, )).fetchone()
+
+        if (user is None):
+            c.execute('''
+            INSERT INTO Users (UID, isAdmin, Email, Address) VALUES (?, 0, ?, "")
+            ''', (userid, email))
+            conn.commit()
+        elif user[0] == 1:
+            session['admin'] = True
+        else:
+            session['admin'] = False
+
         return userid
     except Exception as e:
         print("Bad happened", e.message())

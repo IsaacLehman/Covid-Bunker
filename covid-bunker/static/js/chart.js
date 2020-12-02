@@ -28,6 +28,8 @@ fetch('/sales_data/')
         //Which fields to use
         series2.dataFields.valueY = "Total";
         series2.dataFields.dateX = "Date";
+        series2.connect = false;
+        series2.tensionX = 0.8;
 
         //Adds the bullet circle
         series2.bullets.push(new am4charts.CircleBullet());
