@@ -32,6 +32,7 @@ active
   <body>
     <div class="container pt-5 text-center">
         <div class="g-signin2" data-onsuccess="onSignIn"></div>
+        <div class="container py-3" id="response-messages"></div>
         <script>
           function onSignIn(googleUser) {
               // get the profile information
@@ -51,7 +52,9 @@ active
               xhr.open('POST', '/tokensignin/', true);
               xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
               xhr.onload = function() {
-                console.log('Signed in as: ' + xhr.responseText);
+                  console.log('Signed in as: ' + xhr.responseText);
+                  let message_div = document.getElementById('response-messages');
+                  message_div.innerHTML = `<h3 class="display3">${profile.getName()}, you are logged in!</h3>`             
               };
               xhr.send('idtoken=' + id_token);
 
