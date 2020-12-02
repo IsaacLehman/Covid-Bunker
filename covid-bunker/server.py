@@ -92,6 +92,9 @@ def allowed_file(filename):
 def map_product_query_results(products):
     return [{'id':product[0], 'name':product[1], 'description':product[2], 'price':product[3], 'quantity':product[4], 'img':product[5], 'category':product[6]} for product in products]
 
+def map_sale_query_results(sales):
+    return [{'SID':sale[0], 'Total':sale[1], 'UID':sale[2], 'Date':sale[3], 'Status':sale[4]} for sale in sales]
+
 #if you did .fetchone
 def map_product_query_result(product):
     return {'id':product[0], 'name':product[1], 'description':product[2], 'price':product[3], 'quantity':product[4], 'img':product[5], 'category':product[6]}
@@ -699,6 +702,21 @@ def ajax_remove_item_from_cart():
     pid = request.form.get('pid')
     cart = remove_product_from_cart_session(pid)
     return jsonify(cart)
+
+@app.route("/sales_data/")
+def sales_data():
+    #Connect to the database
+    conn = get_db()
+    c = conn.cursor()
+
+    #Get the sales
+    sales = c.execute('''
+    SELECT * FROM Sales''').fetchall()
+
+    #Change to a dictionary
+    salesDict = map_sale_query_results(sales)
+
+    return jsonify(salesDict)
 
 
 ''' errors handlers '''
