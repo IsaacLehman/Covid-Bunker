@@ -397,7 +397,7 @@ def login_get():
 def login_post():
     uid = request.form.get("uid")
     c = get_db().cursor()
-    users = c.execute("SELECT uid, isAdmin from Users where uid=?", (uid,)).fetchone()
+    users = c.execute("SELECT uid, isAdmin, email from Users where uid=?", (uid,)).fetchone()
 
     if len(users) == 0:
         flash("invalid uid")
@@ -406,6 +406,7 @@ def login_post():
 
     session['uid'] = request.form.get("uid")
     session['signed_in'] = True
+    session['email'] = users[2]
     expires = datetime.utcnow()+timedelta(hours=24)
     session["expires"] = expires.strftime("%Y-%m-%dT%H:%M:%SZ")
     if users[1] == 0:
@@ -505,6 +506,11 @@ def cart():
 @app.route("/checkout/<int:PID>", methods=['GET'])
 @app.route("/checkout/<int:PID>/<int:quantity>", methods=['GET'])
 def checkout(PID=0, quantity=1):
+
+    if session['signed_in'] == False:
+        return redirect(url_for("login_get"))
+
+
     products = []
     total_price = 0.0
     if (PID == 0):
@@ -624,7 +630,6 @@ def purchase():
         server.sendmail(
             gmail_user, session.get("email"), message.as_string()
         )
-    session['itemsPurchased'] = ""
     return redirect(url_for("checkout_confirmation"))
 
 # checkout confirmation page
