@@ -276,7 +276,7 @@ def verify_admin_product(template_name, productName, description, quantity, pric
     except:
         flash("Quantity must be integer")
         return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
-    
+
     #Check the price
     try:
         price = float(price)
@@ -288,17 +288,17 @@ def verify_admin_product(template_name, productName, description, quantity, pric
     if productName is None or productName == "":
         flash("You need a product name")
         return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
-    
+
     #Check the product Image
     if (productImg is None or productImg == "") and template_name == "admin_add_product.html":
         flash("Please insert a picture of the product")
         return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
-    
+
     #Check that the quanity is nonnegative
     if quantity is None or quantity < 0:
         flash("Quanity must be at least 0")
         return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
-    
+
     #Check that the price is greater than 0
     if price is None or price <= 0:
         flash("This is a for-profit business. Charity is not allowed")
@@ -456,9 +456,12 @@ def cart():
 @app.route("/checkout/<int:PID>/<int:quantity>")
 def checkout(PID=0, quantity=1):
     products = []
+    total_price = 0.0
     if (PID == 0):
         #Get the cart
         products = get_cart()
+        for p in products:
+            total_price += p['price'] * p['quantity']
     else:
         #Connect to the database
         conn = get_db()
@@ -470,16 +473,19 @@ def checkout(PID=0, quantity=1):
         ''', (PID, )).fetchone()
 
         if (product is None or product==""):
-            products = "" 
+            products = "" # no product was found
         else:
             #Set the product quantity to the quantity to be purchased
             product = map_product_query_result(product)
+            total_price += product['price'] * quantity
+            print(product['price'], product['quantity'])
             product['quantity']=quantity
             products.append(product)
 
-    
+
+
     session['itemsPurchased'] = products
-    return render_template("checkout.html", products=products)
+    return render_template("checkout.html", products=products, total_price=total_price)
 
 @app.route("/purchase_product/")
 def purchase():
@@ -576,7 +582,7 @@ def admin():
     SELECT * FROM Products;
     ''').fetchall()
 
-    #Total sales for each product 
+    #Total sales for each product
     sales = {}
 
     #The urls to edit a product
@@ -708,7 +714,7 @@ def admin_save_edited_product(PID):
     quantity = request.form.get("quantity")
     price = request.form.get("price")
     category = request.form.get("category")
-    
+
     #Verify the fields
     verification = verify_admin_product("admin_edit_product.html", productName, description, quantity, price, productImg, category, PID)
     if verification != "":
@@ -736,7 +742,7 @@ def admin_save_edited_product(PID):
             os.remove(fullPath)
         else:
             print("Image could not be found")
-        
+
         #Save the new image
         filename = secure_filename(productImg.filename)
         productImg.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -798,7 +804,7 @@ def sales_data():
         date = str(datetime.strptime(sale.get("Date"), '%Y-%m-%d %H:%M:%S.%f').date())
 
         foundDate = False
-        
+
         #Find the total for each date
         for data in output:
             if date == data.get("Date"):
@@ -811,7 +817,7 @@ def sales_data():
             'Total': int(sale.get("Total"))
             }
             output.append(salePerDate)
-        
+
     return jsonify(output)
 
 

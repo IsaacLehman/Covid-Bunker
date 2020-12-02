@@ -17,7 +17,6 @@ window.addEventListener("DOMContentLoaded", function() {
       let quantity_selector = document.getElementById(`quantity-select-${pid}`);
       if (quantity_selector != null) {
           quantity = quantity_selector.value;
-          console.log('value', quantity);
       }
 
       ajax_add_to_cart(pid, quantity);
@@ -35,6 +34,18 @@ window.addEventListener("DOMContentLoaded", function() {
 
   // set num items in cart
   ajax_update_cart()
+
+  // update buy now url to have quanity
+  let quantity_selectors = document.querySelectorAll('.product-quantity-select');
+  for (var i = 0; i < quantity_selectors.length; i++) {
+      quantity_selectors[i].addEventListener('change', function(e) {
+          let pid = parseInt(this.title);
+          let link = document.getElementById(`buy_now_url_${pid}`);
+          let url = link.href;
+          let quantity = this.value;
+          link.href = `/checkout/${pid}/${quantity}`;
+      });
+  }
 });
 
 

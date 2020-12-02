@@ -30,7 +30,7 @@
           <a href="{{url_for("purchase")}}">
             <button type="button"  class="btn btn-lg btn-danger mb-2" onclick="this.blur();">Purchase</button>
           </a>
-            
+
         </div>
         {% endif %}
     </div>
@@ -61,20 +61,20 @@
     </div>
   </div>
   {% endfor %}
-  <div class="container"  id="bottom-cart-btns">
+  <div class="container"  id="bottom-checkout-btns">
     <div class="row pt-3 pb-5">
       <div class="col-12 text-right">
-          <h1 id="cart-icon-cart-page"><i class="fas fa-shopping-cart"></i> Total</h1>
+          <h1 id="cart-icon-checkout-page"><i class="fas fa-shopping-cart"></i> Total -  {{ "$%.2f"|format(total_price) }}</h1>
       </div>
       <div class="col-12 text-right">
         <a href="{{url_for("purchase")}}">
             <button type="button"  class="btn btn-lg btn-danger mb-2" onclick="this.blur();">Purchase</button>
-        </a>  
+        </a>
       </div>
     </div>
   </div>
   {% endif %}
-  <div class="container text-center hidden" id="cart-empty-div">
+  <div class="container text-center hidden" id="checkout-empty-div">
     <h1 class="display-4 text-center pt-5">Your cart is empty...</h1>
     <br />
     <a href="/" class="btn btn-lg btn-success">Go Find Something :)</a>
