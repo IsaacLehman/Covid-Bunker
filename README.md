@@ -18,3 +18,10 @@
     NOTE:
         Make sure you run on local host and not the local ip address.
         Example: http://localhost:5000
+
+    At the login page you can login as either 
+        a) a google account using the google id 
+        b) a pre-existing user id
+
+        To test admin functionality, login with user id 1
+        To test normal user functionality, login with user id abc123
