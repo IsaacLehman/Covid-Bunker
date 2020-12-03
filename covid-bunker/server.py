@@ -483,7 +483,7 @@ def profile():
         SELECT SID, Total, Date, Status FROM Sales WHERE UID = ?;
         ''', (uid,)).fetchall()
 
-""" TODO impliment products sold
+        """ TODO impliment products sold
         for sale in sales:
             sid = sale[0]
             products_sold = c.execute('''
@@ -493,7 +493,7 @@ def profile():
             print(products_sold)
             s.append(products_sold)
             sale = tuple(s)
-"""
+            """
 
         # attempt to get past purchases
 
