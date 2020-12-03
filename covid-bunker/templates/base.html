@@ -39,6 +39,12 @@
     <button onclick="topFunction()" id="topBtn" title="Go to top"><i class="fas fa-arrow-circle-up"></i></button>
     <div class="main-body">
         <header>
+            {% for message in get_flashed_messages() %}
+          	<div class="alert alert-warning">
+          		<button type="button" class="close" data-dismiss="alert">&times;</button>
+          		{{ message }}
+          	</div>
+            {% endfor %}
             {% block header %}
             <nav class="navbar navbar-expand-lg navbar-light bg-dark">
                 <div class="container">
@@ -75,12 +81,7 @@
             </nav>
             {% endblock %}
         </header>
-        {% for message in get_flashed_messages() %}
-      	<div class="alert alert-warning">
-      		<button type="button" class="close" data-dismiss="alert">&times;</button>
-      		{{ message }}
-      	</div>
-        {% endfor %}
+
         {% block search %}
         <div class="container pt-4 pb-4">
             <form class="form-inline d-flex justify-content-center md-form form-sm" action="/search/" method="GET">

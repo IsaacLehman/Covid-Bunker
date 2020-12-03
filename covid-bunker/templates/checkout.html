@@ -77,22 +77,21 @@ input[type=number] {
                         </div>
                     </div>
 
-                </form>
 
-                <!-- Check out buttons -->
 
-                <div class="container"  id="bottom-checkout-btns">
-                    <div class="row pt-3 pb-5">
-                        <div class="col-12 text-center">
-                            <h2 id="cart-icon-checkout-page"><i class="fas fa-shopping-cart"></i> Total -  {{ "$%.2f"|format(total_price) }}</h2>
-                        </div>
-                        <div class="col-12 text-center">
-                            <a href="{{url_for("purchase")}}">
-                                <button type="button"  class="btn btn-lg btn-danger mb-2" onclick="this.blur();">Purchase</button>
-                            </a>
+                    <!-- Check out buttons -->
+
+                    <div class="container"  id="bottom-checkout-btns">
+                        <div class="row pt-3 pb-5">
+                            <div class="col-12 text-center">
+                                <h2 id="cart-icon-checkout-page"><i class="fas fa-shopping-cart"></i> Total -  {{ "$%.2f"|format(total_price) }}</h2>
+                            </div>
+                            <div class="col-12 text-center">
+                                <input type="submit" class="btn btn-lg btn-danger mb-2" name="sub" value="Purchase">
+                            </div>
                         </div>
                     </div>
-                </div>
+                </form>
 
 
 

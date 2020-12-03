@@ -22,15 +22,19 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container pt-5">
 
-    <div class="container rounded shadow mb-4">
-  
+    <div class="container rounded shadow mb-4 pb-2 px-4">
+
       <h1 class="display-5 text-center">Thank you for your purchase</h1>
 
       <p class="lead"> A confirmation email has been sent to {{session.email}} </p>
       <p class="lead"> Your package is on its way to: {{address}} </p>
 
+    </div>
+
+    <div class="text-center">
+      <a href="/" class="btn btn-lg btn-success">Go Find Something Else :)</a>
     </div>
 </div>
 {% endblock %}

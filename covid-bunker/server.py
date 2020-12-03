@@ -446,12 +446,12 @@ def google_authentication_ajax():
         conn = get_db()
         c = conn.cursor()
 
-        #Get the product that is being bought now
+        # check if the user is admin or customer
         user = c.execute('''
         SELECT isAdmin FROM Users WHERE UID=?;
         ''', (userid, )).fetchone()
 
-        if (user is None):
+        if (user is None): # if not in db, add to db
             c.execute('''
             INSERT INTO Users (UID, isAdmin, Email, Address) VALUES (?, 0, ?, "")
             ''', (userid, email))
@@ -470,6 +470,11 @@ def google_authentication_ajax():
 # profile page
 @app.route("/profile/")
 def profile():
+    if session['signed_in']:
+        uid = session['uid']
+
+        # attempt to get past purchases
+
     return render_template("profile.html")
 
 ### PRODUCTS ###
@@ -553,7 +558,7 @@ def purchase():
     if request.form.get("address") is None or request.form.get("address") == "":
         valid = False
         flash("Shipping address is required!")
-
+        print('here')
     try:
         int(request.form.get("ccn"))
         int(request.form.get("cvv"))
