@@ -57,10 +57,14 @@ active
               var xhr = new XMLHttpRequest();
               xhr.open('POST', '/tokensignin/', true);
               xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-              xhr.onload = function() {
+              xhr.onload = async function() {
                   console.log('Signed in as: ' + xhr.responseText);
                   let message_div = document.getElementById('response-messages');
-                  message_div.innerHTML = `<h3 class="display3">${profile.getName()}, you are logged in!</h3>`
+                  message_div.innerHTML = `<h3 class="display3">${profile.getName()}, you are logged in!</h3>`;
+                  await new Promise(r => setTimeout(r, 500));
+                  // go back to home page
+                  window.location.href = "/";
+
               };
               xhr.send('idtoken=' + id_token + "&name=" + name + "&img=" + image_url + "&email=" + email);
 
