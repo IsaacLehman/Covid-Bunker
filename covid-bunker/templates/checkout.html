@@ -36,93 +36,115 @@ input[type=number] {
 </style>
 
 <br>
-  <div class="container">
-      <div class="row">
-        <div class="col-4 text-left">
+<div class="container">
+    <div class="row">
+        <div class="col-lg-4 col-md-12 text-left pt-4">
             <h1> Payment Info</h1>
-        </div>
-        <div class="col-8 text-left">
-          <h1> Items To Purchase</h1>
-      </div>
-    </div>
-  </div>
-  {% if products %}
-  <div class="container">
-    <div class="row">
-      <div class="container rounded shadow col-md-4 col-6c text-center">
+            <div class="rounded shadow text-center pt-4 px-2">
+		<h4>Signed in as: {{session.email}}</h4>
 
-        <h4>Signed in as: {{session.email}}</h4> 
-        
-        <!-- FORM GOES HERE -->
-        <form action="/checkout/" method="POST">
+                <!-- FORM GOES HERE -->
+                <form action="/checkout/" method="POST">
+                    <div class="row py-2">
+                        <div class="col-8">
+                            <input class="form-control" id="ccn" placeholder="Credit card number" aria-label="Credit card number" type="text" name="ccn" required>
+                        </div>
+                        <div class="col-4">
+                            <input class="form-control" id="cvv" placeholder="CVV" aria-label="CVV" type="text" name="cvv" size="2" required>
+                        </div>
+                    </div>
 
-                <input id="ccn" placeholder="Credit card number" aria-label="Credit card number" type="number" name="ccn" required>
-                <input id="cvv" placeholder="CVV" aria-label="CVV" type="number" name="cvv" size="2" required>
-              <br><br>
+                    <div class="row py-2 justify-content-center">
 
-                  <input id="exp-month" placeholder="Month" aria-label="Month" type="number" name="exp-mon" size="2" required>
-                  /
-                  <input id="exp-year" placeholder="Year" aria-label="Year" type="number" name="exp-year" size="2" required>
+                        <div class="col-4">
+                            <input class="form-control" id="exp-month" placeholder="Month" aria-label="Month" type="text" name="exp-mon" size="2" required>
+                        </div>
+                        <div class="col-1 text-center">
+                            <h2>/</h2>
+                        </div>
+                        <div class="col-4">
+                            <input class="form-control" id="exp-year" placeholder="Year" aria-label="Year" type="text" name="exp-year" size="2" required>
+                        </div>
+                    </div>
 
-              <br><br>
-              {% if address %}
-              <input id="address" placeholder="Shipping address" aria-label="Shipping address" type="text" name="address" size="35" value="{{address}}" required>
-              {% else %}
-                <input id="address" placeholder="Shipping address" aria-label="Shipping address" type="text" name="address" size="35" required>
-              {% endif %}
-        
+                    <div class="row">
+                        <div class="col-12">
+                        	{% if address %}
+              				<input class="form-control" id="address" placeholder="Shipping address" aria-label="Shipping address" type="text" name="address" size="35" value="{{address}}" required>
+              			{% else %}
+                			<input class="form-control" id="address" placeholder="Shipping address" aria-label="Shipping address" type="text" name="address" size="35" required>
+              			{% endif %}
+                        </div>
+                    </div>
 
-        <!-- Check out buttons -->
+                </form>
+
+                <!-- Check out buttons -->
+
+                <div class="container"  id="bottom-checkout-btns">
+                    <div class="row pt-3 pb-5">
+                        <div class="col-12 text-center">
+                            <h1 id="cart-icon-checkout-page"><i class="fas fa-shopping-cart"></i> Total -  {{ "$%.2f"|format(total_price) }}</h1>
+                        </div>
+                        <div class="col-12 text-center">
+                            <a href="{{url_for("purchase")}}">
+                                <button type="button"  class="btn btn-lg btn-danger mb-2" onclick="this.blur();">Purchase</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
 
-                <h1 id="cart-icon-checkout-page"> Total -  {{ "$%.2f"|format(total_price) }}</h1>
-            <div class="col-12 text-center">
 
-
-              <input type="submit" class="btn btn-lg btn-danger mb-2" name="sub" value="Purchase">
-              
             </div>
-          </form>
-
-
-      </div>
-      <div class="col-md-8">
-  {% for product in products %}
-  <div class="container rounded shadow mb-4" id="{{ product.id }}">
-
-    <h1 class="display-5 text-center">{{product.name}}</h1>
-
-    <div class="row">
-        <div class="col-md-4 col-6">
-            <img src="/static/img/{{product.img}}" alt="{{product.name}}" class="img-fluid rounded shadow">
-        </div>
-        <div class="col-md-8 col-6 pt-2">
-            <p class="lead">{{product.description}} </p>
         </div>
 
+
+
+
+
+
+
+        <div class="col-lg-8 col-md-12 text-left pt-4">
+            <h1> Items To Purchase</h1>
+            {% if products %}
+
+            {% for product in products %}
+            <div class="container rounded shadow mb-4" id="{{ product.id }}">
+
+                <h1 class="display-5 text-center">{{product.name}}</h1>
+
+                <div class="row">
+                    <div class="col-md-4 col-6">
+                        <img src="/static/img/{{product.img}}" alt="{{product.name}}" class="img-fluid rounded shadow">
+                    </div>
+                    <div class="col-md-8 col-6 pt-2">
+                        <p class="lead">{{product.description}} </p>
+                    </div>
+
+                </div>
+                <hr class="my-4">
+                <div class="row align-items-center">
+                    <div class="col-sm-4 mr-auto pb-2">
+                        <h4>
+                            Price: {{ "$%.2f"|format(product.price) }}<br>
+                            Quantity: {{product.quantity}}
+                        </h4>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+
+            {% endif %}
+        </div>
     </div>
-    <hr class="my-4">
-    <div class="row align-items-center">
-        <div class="col-sm-4 mr-auto pb-2">
-            <h4>
-            Price: {{ "$%.2f"|format(product.price) }}<br>
-            Quantity: {{product.quantity}}
-            </h4>
-          </div>
-    </div>
-  </div>
-  {% endfor %}
+</div>
 
-  </div>
-    </div>
-  </div>
-
-
-
-  {% endif %}
-  <div class="container text-center hidden" id="checkout-empty-div">
+<div class="container text-center hidden" id="checkout-empty-div">
     <h1 class="display-4 text-center pt-5">Your cart is empty...</h1>
     <br />
     <a href="/" class="btn btn-lg btn-success">Go Find Something :)</a>
-  </div>  
+</div>
+
 {% endblock %}
