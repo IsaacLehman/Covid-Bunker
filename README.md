@@ -25,3 +25,5 @@
 
         To test admin functionality, login with user id 1
         To test normal user functionality, login with user id abc123
+
+    NOTE: Google Pay and Purchase History are incomplete
