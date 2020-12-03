@@ -41,7 +41,7 @@ input[type=number] {
         <div class="col-lg-4 col-md-12 text-left pt-4">
             <h1> Payment Info</h1>
             <div class="rounded shadow text-center pt-4 px-2">
-		<h4>Signed in as: {{session.email}}</h4>
+		    <h5>Signed in as: {{session.email}}</h5>
 
                 <!-- FORM GOES HERE -->
                 <form action="/checkout/" method="POST">
@@ -84,7 +84,7 @@ input[type=number] {
                 <div class="container"  id="bottom-checkout-btns">
                     <div class="row pt-3 pb-5">
                         <div class="col-12 text-center">
-                            <h1 id="cart-icon-checkout-page"><i class="fas fa-shopping-cart"></i> Total -  {{ "$%.2f"|format(total_price) }}</h1>
+                            <h2 id="cart-icon-checkout-page"><i class="fas fa-shopping-cart"></i> Total -  {{ "$%.2f"|format(total_price) }}</h2>
                         </div>
                         <div class="col-12 text-center">
                             <a href="{{url_for("purchase")}}">
