@@ -316,6 +316,9 @@ def verify_admin_product(template_name, productName, description, quantity, pric
         return render_template(template_name, productName=productName, productImg=productImg, description=description, quantity=quantity, price=price, category=category, PID=PID)
 
     return ""
+
+
+
 ''' ************************************************************************ '''
 '''                               ROUTE HANDLERS                             '''
 ''' ************************************************************************ '''
@@ -419,6 +422,9 @@ def login_post():
 @app.route("/logout/", methods=['GET'])
 def logout():
     session['uid'] = None
+    session['email'] = None
+    session['img'] = None
+    session['name'] = None
     session['signed_in'] = False
     return redirect(url_for("home"))
 
@@ -472,10 +478,26 @@ def google_authentication_ajax():
 def profile():
     if session['signed_in']:
         uid = session['uid']
+        c = get_db().cursor()
+        sales = c.execute('''
+        SELECT SID, Total, Date, Status FROM Sales WHERE UID = ?;
+        ''', (uid,)).fetchall()
+
+""" TODO impliment products sold
+        for sale in sales:
+            sid = sale[0]
+            products_sold = c.execute('''
+            SELECT ProductsSold.pid, Name, ProductsSold.Qty, price FROM ProductsSold JOIN products ON Products.PID = ProductsSold.PID where SID = ?;
+            ''', (sid,)).fetchall()
+            s = list(sale)
+            print(products_sold)
+            s.append(products_sold)
+            sale = tuple(s)
+"""
 
         # attempt to get past purchases
 
-    return render_template("profile.html")
+    return render_template("profile.html", sales=sales)
 
 ### PRODUCTS ###
 # product page

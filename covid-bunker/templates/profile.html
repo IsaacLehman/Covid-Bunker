@@ -25,7 +25,7 @@ active
 {% block content %}
 <div class="container">
     {% if session.signed_in %}
-    <div class="container py-3" id="profile-details"></div>
+    <div class="py-3" id="profile-details"></div>
     <a id="admin-button" class="btn btn-primary admin-button" href="{{url_for("admin")}}" role="button">Admin Side</a>
     <script>
           window.addEventListener("DOMContentLoaded", function() {
@@ -37,18 +37,35 @@ active
               output += `<img src="${image_url}" class="py-2" alt="Profile Image"/>`;
               output += `<h3>Name: ${name}</h3>`;
               output += `<h3>Email: ${email}</h3>`;
-              console.log(output);
 
               let profile_details = document.getElementById('profile-details');
               profile_details.innerHTML = output;
               let adminButton = document.getElementById("admin-button");
-              if ("{{session.admin}}" == "True") {                  
+              if ("{{session.admin}}" == "True") {
                 adminButton.style.visibility = "visible";
               } else  {
                 adminButton.style.visibility = "hidden";
               }
           });
     </script>
+
+    <!-- purchases -->
+    <h1 class="display-3 py-3">Purchases</h1>
+    {% if sales %}
+        {% for s in sales %}
+            <hr>
+            Sale ID: {{ s[0] }}
+            <br/>
+            Sale Total:  {{ "$%.2f"|format(s[1]) }}
+            <br/>
+            Date Purchased: {{ s[2].split()[0] }}
+            <br/>
+            Status: {{ s[3] }}
+        {% endfor %}
+    {% else %}
+        <h4>No sales...</h4>
+    {% endif %}
+
     {% endif %}
 </div>
 {% endblock %}
