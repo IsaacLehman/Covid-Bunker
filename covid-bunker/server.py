@@ -58,8 +58,8 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'gif'}
 ''' ************************************************************************ '''
 '''                                EMAIL SET UP                                '''
 ''' ************************************************************************ '''
-gmail_user = 'comp342gccf19@gmail.com'
-gmail_password = 'P@$$word1!'
+gmail_user = 'covidbunker@gmail.com'
+gmail_password = '4CBProfit$'
 gmail_admin = 'ciremt58@gmail.com'
 
 ''' ************************************************************************ '''
