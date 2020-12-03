@@ -463,19 +463,9 @@ def google_authentication_ajax():
 
         return userid
     except Exception as e:
-        print("Bad happened", e.message())
+        print("Bad happened", e)
         return ""
 
-### REGISTER ###
-# register page
-@app.route("/register/", methods=['GET'])
-def register_get():
-    return render_template("register.html")
-
-# register page (after login submission)
-@app.route("/register/", methods=['POST'])
-def register_post():
-    return render_template("register.html")
 
 # profile page
 @app.route("/profile/")
@@ -574,7 +564,7 @@ def purchase():
         flash("Illegal input!")
 
     if valid == False:
-        return redirect(url_for("checkout")) 
+        return redirect(url_for("checkout"))
     # if we mess up on an individual buy page, it won't take us back to it just yet
 
     address = request.form.get("address")
@@ -917,7 +907,7 @@ def sales_data():
         foundDate = False
         #Find the total for each date
         for data in output:
-            
+
             if date == data.get("Date") or date in data.get("Date"):
                 data['Total'] += float(sale.get("Total"))
                 foundDate = True
