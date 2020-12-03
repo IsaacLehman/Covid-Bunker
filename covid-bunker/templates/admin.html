@@ -28,11 +28,11 @@
 {% block content %}
 <div id="chartdiv"></div>
 <div class="container">
-    <div class="row hor-scroll">
-        
+    <div class="d-flex flex-row flex-nowrap overflow-auto px-2">
+
             {%for product in products%}
-            <div class="card col-md-3 card-scroll">
-                <div class="card-header card-color card-header-flex"> 
+            <div class="card card-block mx-2" style="width: 250px;min-width: 250px;">
+                <div class="card-header card-color card-header-flex">
                 <h3>{{product['name']}}</h3>
                 <a href="{{urlsForDeleteProduct[product['id']]}}">
                     <i class="fas fa-trash delete-button" ></i>
@@ -45,16 +45,16 @@
                 <h4 class="card-text card-color"> Price: ${{product['price']}}</h4>
                     <h4 class="card-text card-color">Quantity: {{product['quantity']}} </h4>
                     <h4 class="card-text card-color">Sales: ${{sales[product['id']]}} </h4>
-                    
+
                 </div>
                 <a class="btn btn-primary admin-button" href="{{urlsForEditProduct[product['id']]}}" role="button">Edit Product</a>
-            </div> 
-            {%endfor%}    
-        
+            </div>
+            {%endfor%}
+
     </div>
 </div>
 <div class="container">
     <a class="btn btn-primary admin-button" href="{{urlAddProduct}}" role="button">Add Product</a>
 </div>
-    
+
 {% endblock %}
