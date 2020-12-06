@@ -151,19 +151,23 @@ def allowed_file(filename):
 # returns a dictionary of the products: {id, name, description, price, quantity, img}
 # for .fetchall
 def map_product_query_results(products):
-    return [{'id':product[0], 'name':product[1], 'description':product[2], 'price':product[3], 'quantity':product[4], 'img':product[5], 'category':product[6]} for product in products]
+    return [{'id':product[0], 'name':product[1], 'description':product[2], 'price':product[3], 'quantity':product[4], 'img':product[5], 'category':product[6], 'status':product[7]} for product in products]
 
 def map_sale_query_results(sales):
     return [{'SID':sale[0], 'Total':sale[1], 'UID':sale[2], 'Date':sale[3], 'Status':sale[4]} for sale in sales]
 
 #if you did .fetchone
 def map_product_query_result(product):
-    return {'id':product[0], 'name':product[1], 'description':product[2], 'price':product[3], 'quantity':product[4], 'img':product[5], 'category':product[6]}
+    return {'id':product[0], 'name':product[1], 'description':product[2], 'price':product[3], 'quantity':product[4], 'img':product[5], 'category':product[6], 'status':product[7]}
 
 
 # filter products to only include ones in stock
 def filter_in_stock(products):
     return [p for p in products if p['quantity'] > 0]
+
+#filter products which are listed
+def filter_is_listed(products):
+    return [p for p in products if p['status'] == 1]
 
 
 ''' ************************************************************************ '''
@@ -172,6 +176,10 @@ def filter_in_stock(products):
 # check if single product has enough stock to sell
 def is_in_stock(product, quantity):
     return product['quantity'] >= quantity
+
+#check to see if the product is listed
+def is_listed(product):
+    return product['status']==1
 
 # returns a list of dictionaries (i.e. products)
 def get_cart():
@@ -342,7 +350,7 @@ def home():
     conn = get_db()
     c = conn.cursor()
     products = c.execute('''
-    SELECT pID, name, description, price, qty, ImgURL, category FROM Products;
+    SELECT * FROM Products;
     ''').fetchall()
 
     # convert products to dictionary
@@ -350,6 +358,8 @@ def home():
 
     # filter out of stock products
     modified_products = filter_in_stock(modified_products)
+
+    modified_products = filter_is_listed(modified_products)
 
     # choose random products to be featured
     num_random_products = 3 # number of featured products to choose
@@ -381,7 +391,7 @@ def search():
             c = conn.cursor()
             # execute query
             products = c.execute('''
-            SELECT pID, name, description, price, qty, ImgURL, category FROM Products
+            SELECT * FROM Products
             WHERE pID = ? OR
             name like ? OR
             description like ? OR
@@ -519,7 +529,7 @@ def product(pid):
     conn = get_db()
     c = conn.cursor()
     product = c.execute('''
-    SELECT pID, name, description, price, qty, ImgURL, category FROM Products where pID = ?;
+    SELECT * FROM Products where pID = ?;
     ''', (pid,)).fetchone()
 
     product = map_product_query_result(product)
