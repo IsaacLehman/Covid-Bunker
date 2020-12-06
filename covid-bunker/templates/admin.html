@@ -42,7 +42,7 @@
                 <div class="card-body">
                 <img class="card-img-top" src="/static/img/{{product['img']}}" alt="{{product['name']}}" width="12rem" height="150rem">
 
-                <h4 class="card-text card-color"> Price: ${{product['price']}}</h4>
+                <h4 class="card-text card-color"> Price: {{"$%.2f"|format(product['price'])}}</h4>
                     <h4 class="card-text card-color">Quantity: {{product['quantity']}} </h4>
                     <h4 class="card-text card-color">Sales: ${{sales[product['id']]}} </h4>
 

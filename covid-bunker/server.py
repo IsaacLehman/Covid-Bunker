@@ -67,22 +67,28 @@ gmail_admin = 'ciremt58@gmail.com'
 ''' ************************************************************************ '''
 # define our login required wrapper
 def login_required(f):
-	@wraps(f)
-	def wrapper(*args, **kwargs):
-		# check that session has a uid that is still good
-		uid = session.get("uid")
-		try:
-			exp_str = session.get("expires",'')
-			exp = datetime.strptime(exp_str, "%Y-%m-%dT%H:%M:%SZ")
-		except ValueError:
-			exp = None
-		# if uid or exp is missing or exp has passed . . .
-		if uid is None or exp is None or exp < datetime.utcnow():
-			# here I return a forbidden error - you could redirect to login
-			return redirect(url_for("login_get"))
-		# only if the user is logged in should the route handler run
-		return f(*args, **kwargs)
-	return wrapper
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        # check that session has a uid that is still good
+        uid = session.get("uid")
+        try:
+            exp_str = session.get("expires",'')
+            exp = datetime.strptime(exp_str, "%Y-%m-%dT%H:%M:%SZ")
+        except ValueError:
+            exp = None
+
+        if exp is None or exp < datetime.utcnow():
+            flash("Your session has expired")
+            return redirect("logout")
+
+        # if uid or exp is missing or exp has passed . . .
+        if uid is None:
+            # here I return a forbidden error - you could redirect to login
+            return redirect(url_for("login_get"))
+
+        # only if the user is logged in should the route handler run
+        return f(*args, **kwargs)
+    return wrapper
 
 
 def is_admin(f):
@@ -96,11 +102,15 @@ def is_admin(f):
             exp = datetime.strptime(exp_str, "%Y-%m-%dT%H:%M:%SZ")
         except ValueError:
             exp = None
+
+        if exp is None or exp < datetime.utcnow():
+            flash("Your session has expired")
+            return redirect("logout")
+
         # if uid or exp is missing or exp has passed . . .
-        print("Failed in final check")
-        if admin is None or exp is None or exp < datetime.utcnow() or admin is False:
+        if admin is None or admin is False:
             # here I return a forbidden error - you could redirect to login
-            print("SHould not be here")
+            flash("You do not have access")
             return redirect(url_for("login_get"))
         # only if the user is logged in should the route handler run
         return f(*args, **kwargs)
@@ -426,6 +436,7 @@ def logout():
     session['img'] = None
     session['name'] = None
     session['signed_in'] = False
+    session['expires'] = None
     return redirect(url_for("home"))
 
 ### GOOGLE TOKEN AUTHENTICATION FOR LOGIN ###
@@ -447,6 +458,8 @@ def google_authentication_ajax():
         session['img'] = img
         session['email'] = email
         session['signed_in'] = True
+        expires = datetime.utcnow()+timedelta(hours=24)
+        session["expires"] = expires.strftime("%Y-%m-%dT%H:%M:%SZ")
 
         #Connect to the database
         conn = get_db()
