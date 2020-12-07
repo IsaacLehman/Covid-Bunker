@@ -1,15 +1,20 @@
 window.addEventListener("DOMContentLoaded", function() {
+    //Get all the list buttons
     let searchButtons = document.querySelectorAll(".list-button")
+
     for (var i = 0; i < searchButtons.length; i++) {
+        //For each button attach an event listener
         searchButtons[i].addEventListener("click", function(e) {
-            var PID = e.target.id
-            var listingValue = e.target.text
+            var PID = e.target.id //The product ID associated with the button
+            var listingValue = e.target.text //What action take on the button click
 
             if (listingValue == "List Product") {
+                //List the product
                 updateListing(PID, 1)
                 e.target.text = "Unlist Product"
                 e.target.style = "background-color: red"
             } else {
+                //Unlist the product
                 updateListing(PID, 0)
                 e.target.text = "List Product"
                 e.target.style = "background-color: green"
@@ -68,10 +73,8 @@ fetch('/sales_data/')
 );
 
 
-
+//AJAX call to update the listing
 function updateListing(PID, listingValue) {
-
-    
 
     const listing = {
         "PID": PID,
