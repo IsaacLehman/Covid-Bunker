@@ -47,6 +47,12 @@
                     <h4 class="card-text card-color">Sales: ${{sales[product['id']]}} </h4>
 
                 </div>
+                {%if product['status']==0%}
+                <a class="btn btn-primary admin-button list-button" id="{{product['id']}}" role="button" style="background-color: green">List Product</a>
+                {%endif%}
+                {%if product['status']==1%}
+                <a class="btn btn-primary admin-button list-button" id="{{product['id']}}" role="button" style="background-color: red">Unlist Product</a>
+                {%endif%}
                 <a class="btn btn-primary admin-button" href="{{urlsForEditProduct[product['id']]}}" role="button">Edit Product</a>
             </div>
             {%endfor%}

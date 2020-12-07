@@ -151,20 +151,26 @@ def allowed_file(filename):
 # returns a dictionary of the products: {id, name, description, price, quantity, img}
 # for .fetchall
 def map_product_query_results(products):
-    return [{'id':product[0], 'name':product[1], 'description':product[2], 'price':product[3], 'quantity':product[4], 'img':product[5], 'category':product[6]} for product in products]
+    return [{'id':product[0], 'name':product[1], 'description':product[2], 'price':product[3], 'quantity':product[4], 'img':product[5], 'category':product[6], 'status':product[7]} for product in products]
 
 def map_sale_query_results(sales):
     return [{'SID':sale[0], 'Total':sale[1], 'UID':sale[2], 'Date':sale[3], 'Status':sale[4]} for sale in sales]
 
 #if you did .fetchone
 def map_product_query_result(product):
-    return {'id':product[0], 'name':product[1], 'description':product[2], 'price':product[3], 'quantity':product[4], 'img':product[5], 'category':product[6]}
+    return {'id':product[0], 'name':product[1], 'description':product[2], 'price':product[3], 'quantity':product[4], 'img':product[5], 'category':product[6], 'status':product[7]}
 
 
 # filter products to only include ones in stock
 def filter_in_stock(products):
     return [p for p in products if p['quantity'] > 0]
 
+#filter products which are listed
+def filter_is_listed(products):
+    return [p for p in products if p['status'] == 1]
+
+def filter_deleted(products):
+    return [p for p in products if p['status'] != -1]
 
 ''' ************************************************************************ '''
 '''                                 CART REUSE                               '''
@@ -172,6 +178,10 @@ def filter_in_stock(products):
 # check if single product has enough stock to sell
 def is_in_stock(product, quantity):
     return product['quantity'] >= quantity
+
+#check to see if the product is listed
+def is_listed(product):
+    return product['status']==1
 
 # returns a list of dictionaries (i.e. products)
 def get_cart():
@@ -342,7 +352,7 @@ def home():
     conn = get_db()
     c = conn.cursor()
     products = c.execute('''
-    SELECT pID, name, description, price, qty, ImgURL, category FROM Products;
+    SELECT * FROM Products;
     ''').fetchall()
 
     # convert products to dictionary
@@ -350,6 +360,8 @@ def home():
 
     # filter out of stock products
     modified_products = filter_in_stock(modified_products)
+
+    modified_products = filter_is_listed(modified_products)
 
     # choose random products to be featured
     num_random_products = 3 # number of featured products to choose
@@ -381,7 +393,7 @@ def search():
             c = conn.cursor()
             # execute query
             products = c.execute('''
-            SELECT pID, name, description, price, qty, ImgURL, category FROM Products
+            SELECT * FROM Products
             WHERE pID = ? OR
             name like ? OR
             description like ? OR
@@ -391,6 +403,8 @@ def search():
             modified_products = map_product_query_results(products)
             # filter out, out-of-stock products
             modified_products = filter_in_stock(modified_products)
+            #Filter out items which are not being listed
+            modified_products = filter_is_listed(modified_products)
 
             return render_template("search.html", products=modified_products, error_msg=error_msg)
     except Exception as e:
@@ -519,7 +533,7 @@ def product(pid):
     conn = get_db()
     c = conn.cursor()
     product = c.execute('''
-    SELECT pID, name, description, price, qty, ImgURL, category FROM Products where pID = ?;
+    SELECT * FROM Products where pID = ?;
     ''', (pid,)).fetchone()
 
     product = map_product_query_result(product)
@@ -735,6 +749,8 @@ def admin():
     #Make the products a dictionary
     products_dict = map_product_query_results(products)
 
+    products_dict = filter_deleted(products_dict)
+
     #For all the products in the sytem
     for product in products_dict:
         sum = 0
@@ -776,7 +792,7 @@ def admin_delete_product(PID):
 
     #Delete the product from the database
     c.execute('''
-    DELETE FROM Products WHERE PID=?
+    UPDATE Products SET Status=-1 WHERE PID=?
     ''', (PID, ))
     conn.commit()
     return redirect(url_for("admin"))
@@ -808,7 +824,7 @@ def admin_post():
 
     #Insert the new product into the database
     c.execute('''
-    INSERT INTO Products (Name, Description, Price, Qty, ImgURL, Category) VALUES (?, ?, ?, ?, ?, ?);
+    INSERT INTO Products (Name, Description, Price, Qty, ImgURL, Category, Status) VALUES (?, ?, ?, ?, ?, ?, 1);
     ''', (productName, description, price, quantity, filename, category))
     conn.commit()
 
@@ -843,6 +859,7 @@ def admin_edit_product(PID):
     product_dict =map_product_query_result(product)
 
     return render_template("admin_edit_product.html", productName=product_dict['name'], productImg=product_dict['img'], description=product_dict['description'], quantity=product_dict['quantity'], price=product_dict['price'], category=product_dict['category'], PID=product_dict['id'])
+
 
 #Save the edited product
 @app.route("/admin-edit-product/<int:PID>", methods=['POST'])
@@ -959,6 +976,24 @@ def sales_data():
             }
             output.append(salePerDate)
     return jsonify(output)
+
+
+@app.route("/changelisting/", methods=['POST'])
+@is_admin
+def changelisting():
+    listing = request.get_json()
+    if listing is None:
+        return redirect(url_for("admin"))
+    
+    #Connect to the database
+    conn = get_db()
+    c = conn.cursor()
+
+    #Update the listing
+    sales = c.execute('''
+    UPDATE Products SET Status=? WHERE PID=?''', (listing['listingValue'], listing['PID']))
+    conn.commit()
+    return "", 201
 
 
 ''' errors handlers '''
