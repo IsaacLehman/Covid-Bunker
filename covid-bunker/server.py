@@ -169,6 +169,8 @@ def filter_in_stock(products):
 def filter_is_listed(products):
     return [p for p in products if p['status'] == 1]
 
+def filter_deleted(products):
+    return [p for p in products if p['status'] != -1]
 
 ''' ************************************************************************ '''
 '''                                 CART REUSE                               '''
@@ -401,6 +403,8 @@ def search():
             modified_products = map_product_query_results(products)
             # filter out, out-of-stock products
             modified_products = filter_in_stock(modified_products)
+            #Filter out items which are not being listed
+            modified_products = filter_is_listed(modified_products)
 
             return render_template("search.html", products=modified_products, error_msg=error_msg)
     except Exception as e:
@@ -745,6 +749,8 @@ def admin():
     #Make the products a dictionary
     products_dict = map_product_query_results(products)
 
+    products_dict = filter_deleted(products_dict)
+
     #For all the products in the sytem
     for product in products_dict:
         sum = 0
@@ -786,7 +792,7 @@ def admin_delete_product(PID):
 
     #Delete the product from the database
     c.execute('''
-    DELETE FROM Products WHERE PID=?
+    UPDATE Products SET Status=-1 WHERE PID=?
     ''', (PID, ))
     conn.commit()
     return redirect(url_for("admin"))
@@ -818,7 +824,7 @@ def admin_post():
 
     #Insert the new product into the database
     c.execute('''
-    INSERT INTO Products (Name, Description, Price, Qty, ImgURL, Category) VALUES (?, ?, ?, ?, ?, ?);
+    INSERT INTO Products (Name, Description, Price, Qty, ImgURL, Category, Status) VALUES (?, ?, ?, ?, ?, ?, 1);
     ''', (productName, description, price, quantity, filename, category))
     conn.commit()
 
@@ -853,6 +859,7 @@ def admin_edit_product(PID):
     product_dict =map_product_query_result(product)
 
     return render_template("admin_edit_product.html", productName=product_dict['name'], productImg=product_dict['img'], description=product_dict['description'], quantity=product_dict['quantity'], price=product_dict['price'], category=product_dict['category'], PID=product_dict['id'])
+
 
 #Save the edited product
 @app.route("/admin-edit-product/<int:PID>", methods=['POST'])
@@ -969,6 +976,24 @@ def sales_data():
             }
             output.append(salePerDate)
     return jsonify(output)
+
+
+@app.route("/changelisting/", methods=['POST'])
+@is_admin
+def changelisting():
+    listing = request.get_json()
+    if listing is None:
+        return redirect(url_for("admin"))
+    
+    #Connect to the database
+    conn = get_db()
+    c = conn.cursor()
+
+    #Update the listing
+    sales = c.execute('''
+    UPDATE Products SET Status=? WHERE PID=?''', (listing['listingValue'], listing['PID']))
+    conn.commit()
+    return "", 201
 
 
 ''' errors handlers '''

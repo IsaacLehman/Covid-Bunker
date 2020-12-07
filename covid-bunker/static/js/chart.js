@@ -1,3 +1,25 @@
+window.addEventListener("DOMContentLoaded", function() {
+    let searchButtons = document.querySelectorAll(".list-button")
+    for (var i = 0; i < searchButtons.length; i++) {
+        searchButtons[i].addEventListener("click", function(e) {
+            var PID = e.target.id
+            var listingValue = e.target.text
+
+            if (listingValue == "List Product") {
+                updateListing(PID, 1)
+                e.target.text = "Unlist Product"
+                e.target.style = "background-color: red"
+            } else {
+                updateListing(PID, 0)
+                e.target.text = "List Product"
+                e.target.style = "background-color: green"
+            }
+            
+        })
+    }
+
+});
+
 //Fetch the sales data
 fetch('/sales_data/')
     .then(function (response) {
@@ -44,3 +66,29 @@ fetch('/sales_data/')
         console.log("Something went wrong!", err);
     }
 );
+
+
+
+function updateListing(PID, listingValue) {
+
+    
+
+    const listing = {
+        "PID": PID,
+        "listingValue": listingValue
+    };
+    
+    fetch("/changelisting/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(listing)
+    }).then(function(response) {
+        if (response.ok) {
+            console.log("Successfully Posted!");
+        } else {
+            return Promise.reject(response);
+        }
+    })
+}
