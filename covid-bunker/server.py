@@ -503,6 +503,7 @@ def google_authentication_ajax():
 # profile page
 @app.route("/profile/")
 def profile():
+    sales = None
     if session['signed_in']:
         uid = session['uid']
         c = get_db().cursor()
@@ -984,7 +985,7 @@ def changelisting():
     listing = request.get_json()
     if listing is None:
         return redirect(url_for("admin"))
-    
+
     #Connect to the database
     conn = get_db()
     c = conn.cursor()
