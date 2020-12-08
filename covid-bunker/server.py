@@ -512,6 +512,16 @@ def profile():
         SELECT SID, Total, Date, Status FROM Sales WHERE UID = ?;
         ''', (uid,)).fetchall()
 
+
+        # get the address
+        address = None
+        try:
+            address = get_db().cursor().execute("select address from Users where uid = ?", (session['uid'],)).fetchone()[0]
+        except Exception as e:
+            address = None 
+
+
+
         """ TODO impliment products sold
         for sale in sales:
             sid = sale[0]
@@ -524,7 +534,7 @@ def profile():
             sale = tuple(s)
             """
 
-        return render_template("profile.html", sales=sales)
+        return render_template("profile.html", sales=sales, address=address)
 
         # attempt to get past purchases
 
@@ -596,7 +606,8 @@ def checkout(PID=0, quantity=1):
     session['purchaseCost'] = total_price
 
     resp = make_response(render_template("checkout.html", products=products, total_price=total_price, address=address))
-    resp.set_cookie('purchaseCost', str(total_price))
+    resp.set_cookie('purchaseCost', str(total_price), samesite='Lax')
+    resp.headers.add('Set-Cookie','cross-site-cookie=bar; SameSite=None; Secure=True')
     return resp
 
 @app.route("/checkout/", methods=['POST'])
