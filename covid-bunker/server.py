@@ -512,6 +512,16 @@ def profile():
         SELECT SID, Total, Date, Status FROM Sales WHERE UID = ?;
         ''', (uid,)).fetchall()
 
+
+        # get the address
+        address = None
+        try:
+            address = get_db().cursor().execute("select address from Users where uid = ?", (session['uid'],)).fetchone()[0]
+        except Exception as e:
+            address = None 
+
+
+
         """ TODO impliment products sold
         for sale in sales:
             sid = sale[0]
@@ -524,7 +534,7 @@ def profile():
             sale = tuple(s)
             """
 
-        return render_template("profile.html", sales=sales)
+        return render_template("profile.html", sales=sales, address=address)
 
         # attempt to get past purchases
 

@@ -25,7 +25,8 @@ active
 {% block content %}
 <div class="container">
     {% if session.signed_in %}
-    <div class="py-3" id="profile-details"></div>
+    <h1 class="display-3">Your Profile</h1>
+    <div class="py-3 container shadow rounded" id="profile-details"></div>
     <a id="admin-button" class="btn btn-primary admin-button" href="{{url_for("admin")}}" role="button">Admin Side</a>
     <script>
           window.addEventListener("DOMContentLoaded", function() {
@@ -33,10 +34,12 @@ active
               name = "{{ session.name }}";
               image_url = "{{ session.img }}";
               email = "{{ session.email }}";
-              let output  = '<h1 class="display-3">Your Profile</h1>';
-              output += `<img src="${image_url}" class="py-2" alt="Profile Image"/>`;
-              output += `<h3>Name: ${name}</h3>`;
-              output += `<h3>Email: ${email}</h3>`;
+              let output  = `<img src="${image_url}" class="py-2" alt="Profile Image"/>`;
+              output += `<h3><span class="font-weight-bold">Name:</span> ${name}</h3>`;
+              output += `<h3><span class="font-weight-bold">Email:</span> ${email}</h3>`;
+              {% if address %}
+              output += "<h3><span class='font-weight-bold'>Address:</span> {{ address }}</h3>"
+              {% endif %}
 
               let profile_details = document.getElementById('profile-details');
               profile_details.innerHTML = output;
