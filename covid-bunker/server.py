@@ -24,6 +24,7 @@
 from flask import Flask, render_template
 from flask import request, session, flash
 from flask import redirect, url_for
+from flask import make_response
 from flask import g
 from flask import jsonify
 from datetime import datetime
@@ -529,7 +530,7 @@ def profile():
 
     return redirect(url_for("login_get"))
 
-    
+
 
 ### PRODUCTS ###
 # product page
@@ -593,40 +594,55 @@ def checkout(PID=0, quantity=1):
 
     session['itemsPurchased'] = products
     session['purchaseCost'] = total_price
-    return render_template("checkout.html", products=products, total_price=total_price, address=address)
+
+    resp = make_response(render_template("checkout.html", products=products, total_price=total_price, address=address))
+    resp.set_cookie('purchaseCost', str(total_price))
+    return resp
 
 @app.route("/checkout/", methods=['POST'])
 def purchase():
-
-    valid = True
-
-    if request.form.get("ccn") is None or request.form.get("ccn") == "":
-        valid = False
-        flash("Credit Card Number is required!")
-    if request.form.get("cvv") is None or request.form.get("cvv") == "":
-        valid = False
-        flash("CVV is required!")
-    if request.form.get("exp-mon") is None or request.form.get("exp-mon") == "" or request.form.get("exp-year") is None or request.form.get("exp-year") == "":
-        valid = False
-        flash("Expiration date is required!")
-    if request.form.get("address") is None or request.form.get("address") == "":
-        valid = False
-        flash("Shipping address is required!")
-        print('here')
+    googlePlayUsed = False
+    address = ""
     try:
-        int(request.form.get("ccn"))
-        int(request.form.get("cvv"))
-        int(request.form.get("exp-mon"))
-        int(request.form.get("exp-year"))
-    except:
-        valid = False
-        flash("Illegal input!")
+        address = request.form.get('shipping_address')
+        if address is None or address == "":
+            googlePlayUsed = False
+        else:
+            googlePlayUsed = True
+    except Exception as e:
+        googlePlayUsed = False
 
-    if valid == False:
-        return redirect(url_for("checkout"))
-    # if we mess up on an individual buy page, it won't take us back to it just yet
+    if not googlePlayUsed:
+        valid = True
 
-    address = request.form.get("address")
+        if request.form.get("ccn") is None or request.form.get("ccn") == "":
+            valid = False
+            flash("Credit Card Number is required!")
+        if request.form.get("cvv") is None or request.form.get("cvv") == "":
+            valid = False
+            flash("CVV is required!")
+        if request.form.get("exp-mon") is None or request.form.get("exp-mon") == "" or request.form.get("exp-year") is None or request.form.get("exp-year") == "":
+            valid = False
+            flash("Expiration date is required!")
+        if request.form.get("address") is None or request.form.get("address") == "":
+            valid = False
+            flash("Shipping address is required!")
+            print('here')
+        try:
+            int(request.form.get("ccn"))
+            int(request.form.get("cvv"))
+            int(request.form.get("exp-mon"))
+            int(request.form.get("exp-year"))
+        except:
+            valid = False
+            flash("Illegal input!")
+
+        if valid == False:
+            return redirect(url_for("checkout"))
+        # if we mess up on an individual buy page, it won't take us back to it just yet
+
+        address = request.form.get("address")
+
     get_db().cursor().execute("UPDATE Users SET address = ? WHERE uid = ?", (address, session['uid']))
     get_db().commit()
 

@@ -1,5 +1,3 @@
-
-
 // add a listener so that when the document loads . . .
 // new listeners  can be attched to elements safely
 window.addEventListener("DOMContentLoaded", function() {
@@ -33,7 +31,7 @@ window.addEventListener("DOMContentLoaded", function() {
   }
 
   // set num items in cart
-  ajax_update_cart()
+  ajax_update_cart();
 
   // update buy now url to have quanity
   let quantity_selectors = document.querySelectorAll('.product-quantity-select');
@@ -142,6 +140,31 @@ function ajax_update_cart() {
       }
       updateCartNumber(get_num_items_in_cart(cart));
       set_cart_total(cart);
+    } else if(http.readyState == 4 && http.status != 200)  {
+      // what to do if bad response
+      console.log('bad ajax happened');
+    }
+  }
+
+  http.open('GET', path, true); // asynchronus ajax_request
+  http.send();
+}
+
+/* -------------------------------------------------------------------------- */
+/*                           GET CART TOTAL                                   */
+/* -------------------------------------------------------------------------- */
+function ajax_get_cart_total() {
+  path = '/ajax_get_cart/'; // where to send the request
+  let http = new XMLHttpRequest();
+
+  http.onreadystatechange = function(){
+    if(http.readyState == 4 && http.status == 200) {
+      // what to do if response was good
+      let cart = JSON.parse(http.response);
+      if(cart.length == 0) {
+        empty_cart();
+      }
+      return get_cart_total(cart);
     } else if(http.readyState == 4 && http.status != 200)  {
       // what to do if bad response
       console.log('bad ajax happened');
