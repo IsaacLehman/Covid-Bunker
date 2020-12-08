@@ -63,7 +63,7 @@ active
                   message_div.innerHTML = `<h3 class="display3">${profile.getName()}, you are logged in!</h3>`;
                   await new Promise(r => setTimeout(r, 500));
                   // go back to home page
-                  // window.location.href = "/";
+                  window.location.href = "/";
 
               };
               xhr.send('idtoken=' + id_token + "&name=" + name + "&img=" + image_url + "&email=" + email);
