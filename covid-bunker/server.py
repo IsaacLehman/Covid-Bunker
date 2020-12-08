@@ -522,9 +522,13 @@ def profile():
             sale = tuple(s)
             """
 
+        return render_template("profile.html", sales=sales)
+
         # attempt to get past purchases
 
-    return render_template("profile.html", sales=sales)
+    return redirect(url_for("login_get"))
+
+    
 
 ### PRODUCTS ###
 # product page
